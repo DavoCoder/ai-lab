@@ -1,0 +1,82 @@
+# Python cache and environment files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.log
+*.env
+
+# Virtual environment
+venv/
+.env/
+.venv/
+env/
+*.venv
+Pipfile
+Pipfile.lock
+
+# Dependency files (optional, if you regenerate them)
+*.egg-info/
+dist/
+build/
+*.whl
+
+# IDEs and editors
+.vscode/
+.idea/
+*.iml
+
+# Streamlit and FastAPI specific
+.streamlit/
+secrets.toml
+
+# Data and storage directories
+data/
+chroma_storage/
+*.json
+*.csv
+*.xlsx
+
+# Local runtime files
+*.pid
+*.seed
+*.lock
+
+# Logs and debugging files
+logs/
+*.log
+
+# Test and coverage results
+.tox/
+.coverage
+coverage.xml
+*.cover
+*.test
+nosetests.xml
+test-results/
+
+# Cache files and temp data
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*.~*
+
+# Hidden system files
+.DS_Store
+Thumbs.db
+
+# Jupyter notebooks checkpoints
+.ipynb_checkpoints/
+
+# Python packaging
+*.tar.gz
+*.zip
+
+# Ignore credentials and secrets
+api_keys.json
+secret_keys.yaml
+config.yaml

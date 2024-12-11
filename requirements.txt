@@ -1,14 +1,19 @@
 openai
 langchain
-langchain_community
-langchain_chroma
-spellchecker
+langchain-chroma
+langchain-openai
+langchain-community
 pyspellchecker
 transformers
 pinecone
 streamlit
 tiktoken
 chromadb
+boto3
+requests
+torch
+watchdog
+uvicorn
 
 
 

@@ -11,7 +11,7 @@ from query_pre_processing.query_rewriter_processor import QueryRewriterProcessor
 from response_post_processing.hallucination_filter import HallucinationFilter
 from response_post_processing.summarization_post_processor import SummarizationPostProcessor
 from langchain.chains import RetrievalQA
-from langchain_community.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
@@ -103,7 +103,7 @@ if st.button("Submit Query"):
 
     # Retrieve documents and generate response
     with st.spinner("Retrieving documents and generating response..."):
-        response = qa_chain.run(user_query)
+        response = qa_chain.invoke(user_query)['result']
 
     # Step 7: Response Post-Processing
     st.info("Applying Response Post-Processing...")

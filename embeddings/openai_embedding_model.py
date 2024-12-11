@@ -1,5 +1,5 @@
 import os
-from langchain_community.embeddings import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from embeddings.embedding_model_interface import EmbeddingModel
 
 class OpenAIEmbeddingModel(EmbeddingModel):

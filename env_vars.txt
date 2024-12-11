@@ -1,0 +1,4 @@
+export OPENAI_API_KEY=""
+export KNOWLEDGE_ARTICLES_DIR_PATH="/ai_storage/knowledge_articles/"
+export CHROMA_PERSIST_DIR_PATH="/ai_storage/chroma_db/"         
+export METADATA_FILE_PATH="/ai_storage/metadata.json"

@@ -1,0 +1,14 @@
+openai
+langchain
+langchain_community
+langchain_chroma
+spellchecker
+pyspellchecker
+transformers
+pinecone
+streamlit
+tiktoken
+chromadb
+
+
+

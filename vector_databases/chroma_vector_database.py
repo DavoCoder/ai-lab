@@ -1,5 +1,5 @@
 import os
-from langchain_chroma import Chroma
+from langchain_community.vectorstores.chroma import Chroma
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from vector_databases.vector_database_interface import VectorDatabase
 

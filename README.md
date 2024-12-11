@@ -1,4 +1,4 @@
-# AI-Powered RAG Pipeline
+# RAG Pipeline
 
 A Retrieval-Augmented Generation (RAG) system that combines document processing, vector storage, and large language models to provide accurate, context-aware responses to queries.
 

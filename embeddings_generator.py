@@ -1,27 +1,22 @@
 import os
 from embeddings.openai_embedding_model import OpenAIEmbeddingModel
+from embeddings.huggingface_embedding_model import HuggingFaceEmbeddingModel
 from vector_databases.chroma_vector_database import ChromaVectorDatabase
 from file_handler.file_change_detector import FileChangeDetector
+from config import Config
 
-data_directory = os.getenv("KNOWLEDGE_ARTICLES_DIR_PATH")
-metadata_file = os.getenv("METADATA_FILE_PATH")
-persist_directory = os.getenv("CHROMA_PERSIST_DIR_PATH")
-
-# Load API key from environment variables
-openai_api_key = os.getenv("OPENAI_API_KEY")
-
-if not openai_api_key:
-    raise ValueError("OpenAI API key not found. Set the 'OPENAI_API_KEY' environment variable.")
+# Validate and set environment variables at startup
+Config.validate()
 
 # Create an Embedding Model
-embedding_model_loader = OpenAIEmbeddingModel(api_key=openai_api_key)
-embedding_model = embedding_model_loader.load_model()
+#embedding_model = OpenAIEmbeddingModel(api_key=openai_api_key).load_model()
+embedding_model = HuggingFaceEmbeddingModel(model_name="all-MiniLM-L6-v2").load_model()
 
 # Use persistent storage for ChromaDB
-vector_db = ChromaVectorDatabase(persist_directory=persist_directory, embedding_model=embedding_model)
+vector_db = ChromaVectorDatabase(persist_directory=Config.CHROMA_PERSIST_DIR_PATH, embedding_model=embedding_model)
 
 #Create a file detector strategy
-file_detector = FileChangeDetector(data_dir=data_directory, metadata_file=metadata_file)
+file_detector = FileChangeDetector(data_dir=Config.KNOWLEDGE_ARTICLES_DIR_PATH, metadata_file=Config.METADATA_FILE_PATH)
 
 # Detect new or updated files
 new_or_updated_files = file_detector.detect_changes()

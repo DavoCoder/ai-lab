@@ -1,4 +1,4 @@
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from embeddings.embedding_model_interface import EmbeddingModel
 
 class HuggingFaceEmbeddingModel(EmbeddingModel):

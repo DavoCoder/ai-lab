@@ -3,8 +3,11 @@ langchain
 langchain-chroma
 langchain-openai
 langchain-community
+langchain-anthropic
+langchain-huggingface
 pyspellchecker
 transformers
+sentence-transformers
 pinecone
 streamlit
 tiktoken
@@ -14,6 +17,8 @@ requests
 torch
 watchdog
 uvicorn
+anthropic 
+
 
 
 

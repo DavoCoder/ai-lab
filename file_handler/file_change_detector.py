@@ -1,7 +1,7 @@
 import os
 import hashlib
 import json
-from langchain.document_loaders import DirectoryLoader, TextLoader
+from langchain_community.document_loaders import DirectoryLoader, TextLoader
 
 class FileChangeDetector:
     def __init__(self, data_dir, metadata_file="metadata.json"):

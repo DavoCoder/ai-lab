@@ -50,7 +50,10 @@ class ChromaVectorDatabase(VectorDatabase):
         print(f"Number of text chunks created: {len(texts)}")
 
         self.vector_db.add_documents(documents)
-        self.vector_db.persist()
+        # For the latest version of Chroma, persistence is handled by the collection
+        if hasattr(self.vector_db, 'collection'):
+            self.vector_db.collection.persist()
+            
         print("New documents added and persisted.")
 
     def delete_documents(self, document_ids):

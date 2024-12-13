@@ -13,14 +13,11 @@ from query_pre_processing.query_rewriter_processor import QueryRewriterProcessor
 from response_post_processing.hallucination_filter import HallucinationFilter
 from response_post_processing.summarization_post_processor import SummarizationPostProcessor
 from langchain.chains import RetrievalQA
-from langchain_community.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
+from config import Config
 
-openai_api_key = os.getenv("OPENAI_API_KEY")
-
-if not openai_api_key:
-    raise ValueError("OpenAI API key not found. Set the 'OPENAI_API_KEY' environment variable.")
-
-persist_directory = os.getenv("CHROMA_PERSIST_DIR_PATH")
+# Validate and set environment variables at startup
+Config.validate()
 
 # Initialize FastAPI
 app = FastAPI(title="RAG Pipeline API", description="An API to expose the RAG pipeline for querying documents.", version="1.0")
@@ -46,7 +43,7 @@ def process_query(request: QueryRequest):
     try:
         # Initialize Embedding Model
         if request.embedding_model == "OpenAI":
-            embedding_model = OpenAIEmbeddingModel(api_key=openai_api_key).load_model()
+            embedding_model = OpenAIEmbeddingModel(api_key=Config.OPENAI_API_KEY).load_model()
         elif request.embedding_model == "HuggingFace":
             embedding_model = HuggingFaceEmbeddingModel(model_name="all-MiniLM-L6-v2").load_model()
         else:
@@ -54,7 +51,7 @@ def process_query(request: QueryRequest):
         
         # Initialize Vector Database
         if request.vector_db == "ChromaDB":
-            vector_db = ChromaVectorDatabase(persist_directory=persist_directory, embedding_model=embedding_model)
+            vector_db = ChromaVectorDatabase(persist_directory=Config.CHROMA_PERSIST_DIR_PATH, embedding_model=embedding_model)
         elif request.vector_db == "Pinecone":
             vector_db = PineconeVectorDatabase(
                 index_name="rag-index", 
@@ -68,7 +65,7 @@ def process_query(request: QueryRequest):
         # Initialize Toxicity Detector
         toxicity_detector = None
         if request.toxicity_detection == "OpenAI":
-            toxicity_detector = OpenAIToxicityDetector(api_key=openai_api_key)
+            toxicity_detector = OpenAIToxicityDetector(api_key=Config.OPENAI_API_KEY)
         elif request.toxicity_detection == "HuggingFace":
             toxicity_detector = HuggingFaceToxicityDetector()
 

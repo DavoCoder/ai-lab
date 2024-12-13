@@ -16,6 +16,9 @@ class Config:
     METADATA_FILE_PATH = os.getenv("METADATA_FILE_PATH")
     # HuggingFace Settings
     TOKENIZERS_PARALLELISM = "false"
+
+    GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+    GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
     
     # Validation
     @classmethod

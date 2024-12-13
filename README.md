@@ -41,14 +41,20 @@ pip install -r requirements.txt
 ```
 
 4. Set up environment variables:
-```bash
-export OPENAI_API_KEY="your_api_key_here"
-export KNOWLEDGE_ARTICLES_DIR_PATH="your_knowledge_articles_dir_path_here"
-export CHROMA_PERSIST_DIR_PATH="your_chroma_persist_dir_path_here"         
-export METADATA_FILE_PATH="your_metadata_file_path_here"
-```
+
+- Create a .env file in the root folder
+- Use the .env_example file to get the environment variables needed
+- Fill out the environment variables with your OpenAI key and Anthropic key
+- CHROMA_PERSIST_DIR_PATH is a local directory path to create the ChromaDB
+- KNOWLEDGE_ARTICLES_DIR_PATH is a local directory path to get Documents for creating embeddings for the ChromaDB. Files supported .txt
+- METADATA_FILE_PATH is a local file path to store hash maps for identifying changes in the knowledge base article dir and files
 
 ### Running the Application
+
+#### Streamlit Frontend
+```bash
+streamlit run app.py
+```
 
 #### FastAPI Backend
 ```bash
@@ -56,11 +62,6 @@ uvicorn main_api:app --reload
 ```
 
 Access the API documentation at `http://localhost:8000/docs`
-
-#### Streamlit Frontend (if applicable)
-```bash
-streamlit run app.py
-```
 
 ## 🏗️ Project Structure
 

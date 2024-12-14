@@ -14,7 +14,6 @@ from langchain.chains import RetrievalQA
 from langchain_openai import ChatOpenAI
 from langchain_anthropic import ChatAnthropic
 from config import Config
-import sqlite3
 from auth.authenticator_manager import AuthenticationManager
 from auth.email_password_authenticator import EmailPasswordAuthenticator
 from auth.google_authenticator import GoogleAuthenticator

@@ -72,7 +72,8 @@ class EmailPasswordAuthenticator(AuthenticationProvider):
                         user_data=self._get_user_data(username)
                     )
                     self.session_manager.set_session(session)
-                    return session
+                    st.rerun()
+                    #return session
                 st.error("Invalid credentials")
         return None
     

@@ -13,7 +13,8 @@ class AuthenticationManager:
     
     def register_provider(self, name: str, provider: AuthenticationProvider):
         """Register a new authentication provider"""
-        self.providers[name] = provider
+        # Convert name to lowercase for consistent lookup
+        self.providers[name.lower()] = provider
     
     def login_form(self):
         """Display login form with all available providers"""
@@ -22,7 +23,7 @@ class AuthenticationManager:
         provider_names = list(self.providers.keys())
         selected_provider = st.radio("Login method", provider_names)
         
-        provider = self.providers[selected_provider]
+        provider = self.providers[selected_provider.lower()]
         return provider.authenticate()
     
     def logout(self):
@@ -30,7 +31,8 @@ class AuthenticationManager:
         if st.sidebar.button("Logout"):
             current_session = self.session_manager.get_session()
             if current_session:
-                provider = self.providers[current_session.auth_provider]
+                # Convert provider name to lowercase for lookup
+                provider = self.providers[current_session.auth_provider.lower()]
                 provider.logout()
     
     def is_authenticated(self) -> bool:

@@ -2,6 +2,15 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from embeddings.embedding_model_interface import EmbeddingModel
 
 class HuggingFaceEmbeddingModel(EmbeddingModel):
+    
+    HUGGINGFACE_MODELS = {
+        "all-mpnet-base-v2": 768,
+        "all-MiniLM-L6-v2": 384,
+        "all-MiniLM-L12-v2": 384,
+        "paraphrase-multilingual-mpnet-base-v2": 768,
+        "sentence-t5-xxl": 1024  
+    }
+
     def __init__(self, model_name="all-MiniLM-L6-v2"):
         """
         HuggingFace Embedding Model Wrapper.

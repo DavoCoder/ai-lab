@@ -10,13 +10,6 @@ import streamlit as st
 
 class EmbeddingsLab(AppMode):
 
-    HUGGINGFACE_MODELS = {
-        "all-mpnet-base-v2": 768,
-        "all-MiniLM-L6-v2": 384,
-        "all-MiniLM-L12-v2": 384,
-        "paraphrase-multilingual-mpnet-base-v2": 768,
-        "sentence-t5-xxl": 1024  # this one matches the Pinecone index
-    }
     @staticmethod
     def render():
         # Sidebar configuration
@@ -33,10 +26,10 @@ class EmbeddingsLab(AppMode):
         if embedding_provider == "HuggingFace":
             model_name = st.sidebar.selectbox(
                 "Select HuggingFace Model",
-                list(EmbeddingsLab.HUGGINGFACE_MODELS.keys()),
-                format_func=lambda x: f"{x} ({EmbeddingsLab.HUGGINGFACE_MODELS[x]} dimensions)"
+                list(HuggingFaceEmbeddingModel.HUGGINGFACE_MODELS.keys()),
+                format_func=lambda x: f"{x} ({HuggingFaceEmbeddingModel.HUGGINGFACE_MODELS[x]} dimensions)"
             )
-            st.sidebar.info(f"Model dimensions: {EmbeddingsLab.HUGGINGFACE_MODELS[model_name]}")
+            st.sidebar.info(f"Model dimensions: {HuggingFaceEmbeddingModel.HUGGINGFACE_MODELS[model_name]}")
             embedding_model = HuggingFaceEmbeddingModel(model_name=model_name).load_model()
         else:  # OpenAI
             #api_key = st.sidebar.text_input("OpenAI API Key", type="password")

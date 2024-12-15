@@ -11,34 +11,34 @@ MODE_INFO = {
         "title": "🏠 AI Lab Home",
         "description": "Welcome to the AI Lab - Your playground for AI experimentation"
     },
-    "RAG Pipeline": {
-        "title": "🔍 RAG Pipeline",
-        "description": "Retrieval-Augmented Generation system for enhanced question answering using your documents."
-    },
-    "Embeddings Lab": {
-        "title": "🧬 Embeddings Laboratory",
-        "description": "Experiment with different embedding models, compare and visualize vector representations."
+    "Model Playground": {
+        "title": "🤖 Model Playground",
+        "description": "Experiment with different AI models and tasks in an interactive environment."
     },
     "Web Research": {
         "title": "🌐 Web Research Assistant",
         "description": "Automated research tools for gathering and synthesizing information from various web sources."
     },
-    "Model Playground": {
-        "title": "🤖 Model Playground",
-        "description": "Experiment with different AI models and tasks in an interactive environment."
-    },
-    "Data Processing": {
+     "Data Processing": {
         "title": "⚙️ Data Processing Hub",
         "description": "Tools for cleaning, transforming, and preparing your data for AI applications."
+    },
+    "Embeddings Lab": {
+        "title": "🧬 Embeddings Laboratory",
+        "description": "Experiment with different embedding models, compare and visualize vector representations."
+    },
+    "RAG Pipeline": {
+        "title": "🔍 RAG Pipeline",
+        "description": "Retrieval-Augmented Generation system for enhanced question answering using your documents."
     }
 }
 
 # Mode mapping
 MODE_CLASSES = {
-     "Home": Home,
-    "RAG Pipeline": RAGPipeline,
-    "Embeddings Lab": EmbeddingsLab,
-    "Web Research": WebResearch,
+    "Home": Home,
     "Model Playground": ModelPlayground,
-    "Data Processing": DataProcessing
+    "Web Research": WebResearch,
+    "Data Processing": DataProcessing,
+    "Embeddings Lab": EmbeddingsLab,
+    "RAG Pipeline": RAGPipeline 
 }

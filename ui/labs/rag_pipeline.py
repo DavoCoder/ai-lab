@@ -129,11 +129,3 @@ class RAGPipeline(AppMode):
             # Step 8: Display Final Response
             st.subheader("Response:")
             st.write(response)
-
-        st.sidebar.info("""
-        Model capabilities:
-        - Claude-3 Opus: Most capable, best for complex tasks
-        - Claude-3 Sonnet: Faster and more cost-effective
-        - GPT-4: Strong general capabilities
-        - GPT-3.5: Fast and cost-effective
-        """)

@@ -34,6 +34,15 @@ class WebResearch(AppMode):
             help="Model used for content evaluation and extraction"
         )
 
+         # API Keys
+        research_api_key = None
+        if research_provider in ["OpenAI", "Anthropic"]:
+            research_api_key = st.sidebar.text_input(
+                f"{research_provider} Research API Key",
+                type="password",
+                help=f"API key for {research_provider} research model"
+            )
+
         # Model Selection for Synthesis
         st.sidebar.subheader("Synthesis Model")
         synthesis_provider = st.sidebar.selectbox(
@@ -50,17 +59,7 @@ class WebResearch(AppMode):
             help="Model used for synthesizing research findings"
         )
 
-        # API Keys
-        research_api_key = None
         synthesis_api_key = None
-        
-        if research_provider in ["OpenAI", "Anthropic"]:
-            research_api_key = st.sidebar.text_input(
-                f"{research_provider} Research API Key",
-                type="password",
-                help=f"API key for {research_provider} research model"
-            )
-            
         if synthesis_provider in ["OpenAI", "Anthropic"]:
             synthesis_api_key = st.sidebar.text_input(
                 f"{synthesis_provider} Synthesis API Key",

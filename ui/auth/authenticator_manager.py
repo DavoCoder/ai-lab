@@ -1,7 +1,7 @@
 import streamlit as st
 from typing import Dict
-from auth.auth_provider_interface import AuthenticationProvider
-from auth.session_manager import SessionManager
+from ui.auth.auth_provider_interface import AuthenticationProvider
+from ui.auth.session_manager import SessionManager
 
 class AuthenticationManager:
     """Manages multiple authentication providers"""

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Optional
-from auth.user_session import UserSession
+from ui.auth.user_session import UserSession
 
 class AuthenticationProvider(ABC):
     """Abstract base class for authentication providers"""

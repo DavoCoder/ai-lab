@@ -1,9 +1,9 @@
 import streamlit as st
 from typing import Optional
 from google_auth_oauthlib.flow import Flow
-from auth.auth_provider_interface import AuthenticationProvider
-from auth.user_session import UserSession
-from auth.session_manager import SessionManager
+from ui.auth.auth_provider_interface import AuthenticationProvider
+from ui.auth.user_session import UserSession
+from ui.auth.session_manager import SessionManager
 
 class GoogleAuthenticator(AuthenticationProvider):
     """Google OAuth authentication implementation"""

@@ -1,6 +1,6 @@
 import streamlit as st
 from typing import Optional
-from auth.user_session import UserSession
+from ui.auth.user_session import UserSession
 
 class SessionManager:
     """Manages user session state"""

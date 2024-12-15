@@ -29,8 +29,7 @@ def setup_authentication():
         client_secret=Config.GOOGLE_CLIENT_SECRET
     )
     
-    # In your app.py or wherever you register providers
-    auth_manager.register_provider("email", email_auth)  # Use lowercase "email" instead of "Email/Password"
+    auth_manager.register_provider("email", email_auth) 
     #auth_manager.register_provider("Google", google_auth)
     
     return auth_manager
@@ -90,7 +89,6 @@ else:
     st.title(MODE_INFO[app_mode]["title"])
     st.markdown(MODE_INFO[app_mode]["description"])
 
-    # Optional: Add a horizontal line for visual separation
     st.markdown("---")
 
     # Conditional UI based on selected mode

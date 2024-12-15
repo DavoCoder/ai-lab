@@ -25,7 +25,7 @@ class GoogleAuthenticator(AuthenticationProvider):
         if st.button("Login with Google"):
             st.markdown(f"[Login with Google]({authorization_url})")
             # Handle OAuth callback and create session
-            # This is simplified - you'll need proper OAuth callback handling
+            # This is simplified - need proper OAuth callback handling
             
         return None
     

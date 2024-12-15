@@ -31,7 +31,7 @@ if not auth_manager.is_authenticated():
     auth_manager.login_form()
 else:
     # Show the main application
-    st.sidebar.title("AI Playground")
+    st.sidebar.title("AI Lab")
     
     # Show logged-in user info and logout button
     session = auth_manager.session_manager.get_session()
@@ -55,14 +55,6 @@ else:
     # Render selected mode
     MODE_CLASSES[app_mode].render()
 
-    # Common Settings (visible in all modes)
-    with st.sidebar.expander("Debug Options"):
-        show_debug = st.checkbox("Show Debug Info", value=False)
-        log_level = st.select_slider(
-            "Log Level",
-            options=["ERROR", "WARNING", "INFO", "DEBUG"]
-        )
-
     # Help & Documentation
     with st.sidebar.expander("Help & Documentation"):
         st.markdown("""
@@ -73,4 +65,4 @@ else:
 
     # System Status
     st.sidebar.markdown("---")
-    st.sidebar.caption("System Status: 🟢 Online")
+    st.sidebar.caption("Developed by DavoCoder 🤖 2024")

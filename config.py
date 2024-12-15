@@ -19,6 +19,10 @@ class Config:
 
     GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
     GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+
+    # Database paths
+    AUTH_DB_PATH = "users.db"
+    AUTH_DB_SCHEMA_PATH = "auth_schema.sql"
     
     # Validation
     @classmethod

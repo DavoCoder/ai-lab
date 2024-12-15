@@ -9,7 +9,7 @@ import hmac
 import secrets
 import re
 import sqlite3
-
+from config import Config
 class EmailPasswordAuthenticator(AuthenticationProvider):
     """Email/Password authentication implementation"""
     
@@ -29,7 +29,7 @@ class EmailPasswordAuthenticator(AuthenticationProvider):
         """Initialize database with schema if tables don't exist"""
         try:
             with self._get_db_connection() as conn:
-                with open('auth_schema.sql', 'r') as schema_file:
+                with open(Config.AUTH_DB_SCHEMA_PATH, 'r') as schema_file:
                     conn.executescript(schema_file.read())
                 conn.commit()
         except Exception as e:

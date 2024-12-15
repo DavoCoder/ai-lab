@@ -9,7 +9,7 @@ def setup_authentication():
     auth_manager = AuthenticationManager()
     
     # Register providers
-    email_auth = EmailPasswordAuthenticator('users.db')
+    email_auth = EmailPasswordAuthenticator(Config.AUTH_DB_PATH)
     google_auth = GoogleAuthenticator(
         client_id=Config.GOOGLE_CLIENT_ID,
         client_secret=Config.GOOGLE_CLIENT_SECRET

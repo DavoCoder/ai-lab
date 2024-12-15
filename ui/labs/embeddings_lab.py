@@ -46,51 +46,13 @@ class EmbeddingsLab(AppMode):
             if embedding_model:
                 if st.button("Process Documents"):
                     with st.spinner("Processing documents..."):
-                        try:
-                            # Ensure persistence directory exists
-                            #os.makedirs(Config.CHROMA_PERSIST_DIR_PATH, exist_ok=True)
-                            # Initialize vector DB
-                            vector_db = ChromaVectorDatabase(
-                                persist_directory=Config.CHROMA_PERSIST_DIR_PATH,
-                                embedding_model=embedding_model
-                            )
 
-                            # Initialize file detector
-                            file_detector = FileChangeDetector(
-                                data_dir=Config.KNOWLEDGE_ARTICLES_DIR_PATH,
-                                metadata_file=Config.METADATA_FILE_PATH
-                            )
-
-                            # Process new/updated files
-                            new_or_updated_files = file_detector.detect_changes()
-                            valid_documents = file_detector.filter_empty_documents(new_or_updated_files)
-
-                            if not valid_documents:
-                                st.info("No valid documents to process.")
-                                print("No valid documents to process. Exiting.")
-                                vector_db.load_or_initialize(documents=[])
-                            else:
-                                st.info(f"Found {len(valid_documents)} documents to process.")
-                                vector_db.load_or_initialize(documents=valid_documents)
-                                vector_db.add_documents(valid_documents)
-                                st.success(f"Successfully processed {len(valid_documents)} documents.")
-
-                            # Handle deleted files
-                            deleted_files = file_detector.detect_deleted_files()
-                            if deleted_files:
-                                st.info(f"Removing embeddings for {len(deleted_files)} deleted files...")
-                                print("Removing embeddings for deleted files...")
-                                vector_db.delete_documents(deleted_files)
-                                st.success("Deleted file embeddings removed from the vector database.")
-                                print("Deleted file embeddings removed from the vector database.")
-
-                            # Save metadata
-                            file_detector.save_metadata()
-                            st.success("Incremental update completed successfully!")
-                            print("Incremental update completed successfully!")
-
-                        except Exception as e:
-                            st.error(f"Error processing documents: {str(e)}")
+                        # Initialize vector DB
+                        vector_db = ChromaVectorDatabase(
+                            persist_directory=Config.CHROMA_PERSIST_DIR_PATH,
+                            embedding_model=embedding_model
+                        )
+                        EmbeddingsLab._process_documents(vector_db)
             else:
                 st.warning("Please configure embedding model first.")
 
@@ -99,7 +61,22 @@ class EmbeddingsLab(AppMode):
             api_key = st.text_input("Pinecone API Key", type="password")
             environment = st.text_input("Pinecone Environment")
             index_name = st.text_input("Index Name")
-            # Pinecone implementation TBD
+            # Picone implementation TBD
+            if embedding_model:
+                if st.button("Process Documents"):
+                    with st.spinner("Processing documents..."):
+                 
+                        # Initialize vector DB
+                        vector_db = PineconeVectorDatabase(
+                            api_key=api_key,
+                            environment=environment,
+                            index_name=index_name,
+                            embedding_model=embedding_model
+                        )
+
+                        EmbeddingsLab._process_documents(vector_db)
+            else:
+                st.warning("Please configure embedding model first.")
 
         # visualization or analysis tools TBD
         st.subheader("Embedding Analysis Tools")
@@ -108,3 +85,46 @@ class EmbeddingsLab(AppMode):
         # - Dimensionality reduction plots
         # - Similarity search demos
         # - Embedding statistics
+
+    @staticmethod
+    def _process_documents(vector_db):
+        """
+        Process documents for embedding generation and storage
+        
+        Args:
+            vector_db: Initialized vector database instance
+        """
+        try:
+            # Initialize file detector
+            file_detector = FileChangeDetector(
+                data_dir=Config.KNOWLEDGE_ARTICLES_DIR_PATH,
+                metadata_file=Config.METADATA_FILE_PATH
+            )
+
+            # Process new/updated files
+            new_or_updated_files = file_detector.detect_changes()
+            valid_documents = file_detector.filter_empty_documents(new_or_updated_files)
+
+            if not valid_documents:
+                st.info("No valid documents to process.")
+                vector_db.load_or_initialize(documents=[])
+            else:
+                st.info(f"Found {len(valid_documents)} documents to process.")
+                vector_db.load_or_initialize(documents=valid_documents)
+                vector_db.add_documents(valid_documents)
+                st.success(f"Successfully processed {len(valid_documents)} documents.")
+
+            # Handle deleted files
+            deleted_files = file_detector.detect_deleted_files()
+            if deleted_files:
+                st.info(f"Removing embeddings for {len(deleted_files)} deleted files...")
+                vector_db.delete_documents(deleted_files)
+                st.success("Deleted file embeddings removed from the vector database.")
+
+            # Save metadata
+            file_detector.save_metadata()
+            st.success("Incremental update completed successfully!")
+            
+        except Exception as e:
+            st.error(f"Error processing documents: {str(e)}")
+            raise

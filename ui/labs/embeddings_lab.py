@@ -9,6 +9,14 @@ from file_handler.file_change_detector import FileChangeDetector
 import streamlit as st
 
 class EmbeddingsLab(AppMode):
+
+    HUGGINGFACE_MODELS = {
+        "all-mpnet-base-v2": 768,
+        "all-MiniLM-L6-v2": 384,
+        "all-MiniLM-L12-v2": 384,
+        "paraphrase-multilingual-mpnet-base-v2": 768,
+        "sentence-t5-xxl": 1024  # this one matches the Pinecone index
+    }
     @staticmethod
     def render():
         # Sidebar configuration
@@ -25,11 +33,14 @@ class EmbeddingsLab(AppMode):
         if embedding_provider == "HuggingFace":
             model_name = st.sidebar.selectbox(
                 "Select HuggingFace Model",
-                ["all-MiniLM-L6-v2", "all-mpnet-base-v2", "all-MiniLM-L12-v2"]
+                list(EmbeddingsLab.HUGGINGFACE_MODELS.keys()),
+                format_func=lambda x: f"{x} ({EmbeddingsLab.HUGGINGFACE_MODELS[x]} dimensions)"
             )
+            st.sidebar.info(f"Model dimensions: {EmbeddingsLab.HUGGINGFACE_MODELS[model_name]}")
             embedding_model = HuggingFaceEmbeddingModel(model_name=model_name).load_model()
         else:  # OpenAI
-            api_key = st.sidebar.text_input("OpenAI API Key", type="password")
+            #api_key = st.sidebar.text_input("OpenAI API Key", type="password")
+            api_key = Config.OPENAI_API_KEY
             if api_key:
                 embedding_model = OpenAIEmbeddingModel(api_key=api_key).load_model()
 
@@ -58,9 +69,12 @@ class EmbeddingsLab(AppMode):
 
         else:  # Pinecone
             st.subheader("Pinecone Configuration")
-            api_key = st.text_input("Pinecone API Key", type="password")
-            environment = st.text_input("Pinecone Environment")
-            index_name = st.text_input("Index Name")
+            #api_key = st.text_input("Pinecone API Key", type="password")
+            api_key = Config.PINECONE_API_KEY
+            #environment = st.text_input("Pinecone Environment")
+            #index_name = st.text_input("Index Name")
+            index_name = Config.PINECONE_INDEX_NAME
+            
             # Picone implementation TBD
             if embedding_model:
                 if st.button("Process Documents"):
@@ -69,7 +83,6 @@ class EmbeddingsLab(AppMode):
                         # Initialize vector DB
                         vector_db = PineconeVectorDatabase(
                             api_key=api_key,
-                            environment=environment,
                             index_name=index_name,
                             embedding_model=embedding_model
                         )

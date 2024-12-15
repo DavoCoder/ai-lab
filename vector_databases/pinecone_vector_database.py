@@ -1,20 +1,29 @@
-import pinecone
-from langchain_community.vectorstores import Pinecone as LangChainPinecone
+from pinecone import Pinecone, ServerlessSpec
+from langchain_pinecone import PineconeVectorStore
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from vector_databases.vector_database_interface import VectorDatabase
 
 class PineconeVectorDatabase(VectorDatabase):
-    def __init__(self, index_name, embedding_model, api_key, environment):
-        pinecone.init(api_key=api_key, environment=environment)
+    def __init__(self, api_key, index_name, embedding_model):
+        self.pc = Pinecone(api_key=api_key )
         self.index_name = index_name
         self.embedding_model = embedding_model
 
-        if index_name not in pinecone.list_indexes():
+        if self.index_name not in self.pc.list_indexes().names():
             print(f"Creating Pinecone index '{index_name}'...")
-            pinecone.create_index(index_name, dimension=1536)  # Adjust for embedding model
+            # TODO: get dimensions from user input
+            self.pc.create_index(
+                name=self.index_name, 
+                dimension=1536, 
+                metric='euclidean',
+                spec=ServerlessSpec(
+                    cloud='aws',
+                    region='us-west-2'
+                )
+            )
 
-        self.index = pinecone.Index(index_name)
-        self.vector_store = LangChainPinecone(self.index, self.embedding_model)
+        self.index = self.pc.Index(index_name)
+        self.vector_store = PineconeVectorStore(index=self.index, embedding=self.embedding_model)
 
     def load_or_initialize(self, documents=None):
         print("Pinecone index ready. No initialization needed.")

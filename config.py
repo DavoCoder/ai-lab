@@ -6,21 +6,30 @@ from pathlib import Path
 load_dotenv()
 
 class Config:
-    # API Keys
+    # LLM API Keys
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
-    
-    # Paths
-    CHROMA_PERSIST_DIR_PATH = os.getenv("CHROMA_PERSIST_DIR_PATH")
+
+    # Knowledge base paths
     KNOWLEDGE_ARTICLES_DIR_PATH = os.getenv("KNOWLEDGE_ARTICLES_DIR_PATH")
     METADATA_FILE_PATH = os.getenv("METADATA_FILE_PATH")
+
     # HuggingFace Settings
     TOKENIZERS_PARALLELISM = "false"
 
+    # Chroma Settings
+    CHROMA_PERSIST_DIR_PATH = os.getenv("CHROMA_PERSIST_DIR_PATH")
+
+    # Pinecone Settings
+    PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
+    PINECONE_ENVIRONMENT = os.getenv("PINECONE_ENVIRONMENT")
+    PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME")
+
+    # Google Auth Settings
     GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
     GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 
-    # Database paths
+    # Auth Database paths
     AUTH_DB_PATH = "users.db"
     AUTH_DB_SCHEMA_PATH = "auth_schema.sql"
     

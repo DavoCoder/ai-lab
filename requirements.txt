@@ -12,6 +12,7 @@ langchain-core==0.3.24
 langchain-huggingface==0.1.2
 langchain-openai==0.2.12
 langchain-text-splitters==0.3.2
+langchain_pinecone==0.2.0
 openai==1.57.2
 pinecone==5.4.2
 pyspellchecker==0.8.1

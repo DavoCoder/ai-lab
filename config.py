@@ -1,11 +1,14 @@
 from dotenv import load_dotenv
 import os
 from pathlib import Path
+import json
+from typing import Dict, Any
 
 # Load environment variables from .env file
 load_dotenv()
 
 class Config:
+    CONFIG_DIR = Path(__file__).parent / "config"
     # LLM API Keys
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
@@ -53,3 +56,26 @@ class Config:
         os.environ["KNOWLEDGE_ARTICLES_DIR_PATH"] = cls.KNOWLEDGE_ARTICLES_DIR_PATH
         os.environ["METADATA_FILE_PATH"] = cls.METADATA_FILE_PATH
         os.environ["TOKENIZERS_PARALLELISM"] = cls.TOKENIZERS_PARALLELISM
+
+    @classmethod
+    def load_config(cls, filename: str) -> Dict[str, Any]:
+        """Load configuration from JSON file."""
+        config_path = cls.CONFIG_DIR / filename
+        try:
+            with open(config_path, 'r') as f:
+                return json.load(f)
+        except Exception as e:
+            raise Exception(f"Error loading configuration {filename}: {str(e)}")
+
+    @classmethod
+    def load_all_configs(cls) -> Dict[str, Dict[str, Any]]:
+        """Load all configuration files."""
+        try:
+            return {
+                "provider_models": cls.load_config("provider_models.json"),
+                "task_descriptions": cls.load_config("task_descriptions.json"),
+                "task_settings": cls.load_config("task_settings.json"),
+                "system_prompts": cls.load_config("system_prompts.json")
+            }
+        except Exception as e:
+            raise Exception(f"Error loading configurations: {str(e)}")

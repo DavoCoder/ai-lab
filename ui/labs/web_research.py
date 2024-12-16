@@ -1,8 +1,9 @@
 from ui.labs.app_mode import AppMode
 from typing import Tuple
 import streamlit as st
-from model_text_processing.model_nlp import ModelNLP
 from web_research.web_researcher import WebResearcher
+from nlp_processing.nlp_processor import NLPProcessor
+
 
 class WebResearch(AppMode):
     @staticmethod
@@ -26,7 +27,7 @@ class WebResearch(AppMode):
             key="research_provider"
         )
         
-        research_models = ModelNLP.PROVIDER_MODELS[research_provider]["Text Generation"]["models"]
+        research_models = NLPProcessor.PROVIDER_MODELS[research_provider]["Text Generation"]["models"]
         research_model = st.sidebar.selectbox(
             "Research Model",
             research_models,
@@ -51,7 +52,7 @@ class WebResearch(AppMode):
             key="synthesis_provider"
         )
         
-        synthesis_models = ModelNLP.PROVIDER_MODELS[synthesis_provider]["Summarization"]["models"]
+        synthesis_models = NLPProcessor.PROVIDER_MODELS[synthesis_provider]["Summarization"]["models"]
         synthesis_model = st.sidebar.selectbox(
             "Synthesis Model",
             synthesis_models,
@@ -117,8 +118,8 @@ class WebResearch(AppMode):
             try:
                 with st.spinner("Researching..."):
                     # Initialize models with their full IDs
-                    research_model_id = ModelNLP.PROVIDER_MODELS[research_provider]["Text Generation"]["model_ids"][research_model]
-                    synthesis_model_id = ModelNLP.PROVIDER_MODELS[synthesis_provider]["Summarization"]["model_ids"][synthesis_model]
+                    research_model_id = NLPProcessor.PROVIDER_MODELS[research_provider]["Text Generation"]["model_ids"][research_model]
+                    synthesis_model_id = NLPProcessor.PROVIDER_MODELS[synthesis_provider]["Summarization"]["model_ids"][synthesis_model]
                     
                     # Perform research
                     sources = WebResearcher.perform_research(
@@ -178,11 +179,11 @@ class WebResearch(AppMode):
             return False, f"Unsupported synthesis provider: {synthesis_provider}"
             
         # Validate research model exists for provider
-        if research_model not in ModelNLP.PROVIDER_MODELS[research_provider]["Text Generation"]["models"]:
+        if research_model not in NLPProcessor.PROVIDER_MODELS[research_provider]["Text Generation"]["models"]:
             return False, f"Invalid research model {research_model} for provider {research_provider}"
             
         # Validate synthesis model exists for provider
-        if synthesis_model not in ModelNLP.PROVIDER_MODELS[synthesis_provider]["Summarization"]["models"]:
+        if synthesis_model not in NLPProcessor.PROVIDER_MODELS[synthesis_provider]["Summarization"]["models"]:
             return False, f"Invalid synthesis model {synthesis_model} for provider {synthesis_provider}"
             
         # Check API keys if needed

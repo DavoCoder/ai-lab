@@ -33,8 +33,7 @@ class EmbeddingsLab(AppMode):
             st.sidebar.info(f"Model dimensions: {HuggingFaceEmbeddingModel.HUGGINGFACE_MODELS[model_name]}")
             embedding_model = HuggingFaceEmbeddingModel(model_name=model_name).load_model()
         else:  # OpenAI
-            #api_key = st.sidebar.text_input("OpenAI API Key", type="password")
-            api_key = Config.OPENAI_API_KEY
+            api_key = st.sidebar.text_input("OpenAI API Key", type="password")
             if api_key:
                 embedding_model = OpenAIEmbeddingModel(api_key=api_key).load_model()
 

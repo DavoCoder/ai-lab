@@ -1,7 +1,7 @@
 from ui.labs.app_mode import AppMode
 import streamlit as st
 from typing import Dict, Any
-from model_text_processing.model_nlp import ModelNLP
+from nlp_processing.nlp_processor import NLPProcessor
 class ModelPlayground(AppMode):
     # Model mappings for different providers and tasks
     @staticmethod
@@ -11,21 +11,21 @@ class ModelPlayground(AppMode):
         # Task Selection
         task_type = st.sidebar.selectbox(
             "Task Type",
-            list(ModelNLP.TASK_DESCRIPTIONS.keys())
+            list(NLPProcessor.TASK_DESCRIPTIONS.keys())
         )
-        st.sidebar.caption(ModelNLP.TASK_DESCRIPTIONS[task_type])
+        st.sidebar.caption(NLPProcessor.TASK_DESCRIPTIONS[task_type])
         
         # Provider Selection
         model_provider = st.sidebar.selectbox(
             "Model Provider",
-            list(ModelNLP.PROVIDER_MODELS.keys())
+            list(NLPProcessor.PROVIDER_MODELS.keys())
         )
         
         # Model Selection based on provider and task
-        available_models = ModelNLP.PROVIDER_MODELS[model_provider][task_type]["models"]
+        available_models = NLPProcessor.PROVIDER_MODELS[model_provider][task_type]["models"]
         selected_model = st.sidebar.selectbox("Model", available_models)
 
-        model_id = ModelNLP.PROVIDER_MODELS[model_provider][task_type]["model_ids"][selected_model]
+        model_id = NLPProcessor.PROVIDER_MODELS[model_provider][task_type]["model_ids"][selected_model]
         
         # Provider-specific settings
         api_key = None
@@ -52,7 +52,7 @@ class ModelPlayground(AppMode):
                 
             with st.spinner("Processing..."):
                 try:
-                    result = ModelNLP.process_task(
+                    result = NLPProcessor.process_task(
                         task_type=task_type,
                         model_provider=model_provider,
                         model=model_id,
@@ -68,7 +68,7 @@ class ModelPlayground(AppMode):
     def _render_advanced_settings(task_type: str) -> Dict[str, Any]:
         settings = {}
         # Add default settings
-        for setting_name, setting_config in ModelNLP.TASK_SETTINGS["default"].items():
+        for setting_name, setting_config in NLPProcessor.TASK_SETTINGS["default"].items():
             if setting_config["type"] in ["float", "int"]:
                 settings[setting_name] = st.slider(
                     setting_name.replace("_", " ").title(),
@@ -78,8 +78,8 @@ class ModelPlayground(AppMode):
                 )
         
         # Add task-specific settings
-        if task_type in ModelNLP.TASK_SETTINGS:
-            for setting_name, setting_config in ModelNLP.TASK_SETTINGS[task_type].items():
+        if task_type in NLPProcessor.TASK_SETTINGS:
+            for setting_name, setting_config in NLPProcessor.TASK_SETTINGS[task_type].items():
                 if setting_config["type"] in ["float", "int"]:
                     settings[setting_name] = st.slider(
                         setting_name.replace("_", " ").title(),

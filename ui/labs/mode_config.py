@@ -4,7 +4,7 @@ from ui.labs.embeddings_lab import EmbeddingsLab
 from ui.labs.web_research import WebResearch
 from ui.labs.model_playground import ModelPlayground
 from ui.labs.data_processing import DataProcessing
-
+from ui.labs.knowledge_base_lab import KnowledgeBaseLab
 # Title and description mapping
 MODE_INFO = {
     "Home": {
@@ -19,9 +19,13 @@ MODE_INFO = {
         "title": "🌐 Web Research Assistant",
         "description": "Automated research tools for gathering and synthesizing information from various web sources."
     },
-     "Data Processing": {
+    "Data Processing": {
         "title": "⚙️ Data Processing Hub",
         "description": "Tools for cleaning, transforming, and preparing your data for AI applications."
+    },
+    "Knowledge Base": {
+        "title": "⚙️ Knowledge Base Lab",
+        "description": "Tools for creating and deleting files in a local knowledge base."
     },
     "Embeddings Lab": {
         "title": "🧬 Embeddings Laboratory",
@@ -39,6 +43,7 @@ MODE_CLASSES = {
     "Model Playground": ModelPlayground,
     "Web Research": WebResearch,
     "Data Processing": DataProcessing,
+    "Knowledge Base": KnowledgeBaseLab,
     "Embeddings Lab": EmbeddingsLab,
     "RAG Pipeline": RAGPipeline 
 }

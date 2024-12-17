@@ -31,8 +31,6 @@ class ModelPlayground(AppMode):
         api_key = None
         if model_provider in ["OpenAI", "Anthropic"]:
             api_key = st.sidebar.text_input(f"{model_provider} API Key", type="password")
-        elif model_provider == "Custom":
-            model_path = st.sidebar.text_input("Model Path/URL")
         
         # Advanced Settings
         with st.sidebar.expander("Advanced Settings"):

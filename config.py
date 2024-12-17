@@ -9,9 +9,6 @@ load_dotenv()
 
 class Config:
     CONFIG_DIR = Path(__file__).parent / "config"
-    # LLM API Keys
-    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-    ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 
     # Knowledge base paths
     KNOWLEDGE_ARTICLES_DIR_PATH = os.getenv("KNOWLEDGE_ARTICLES_DIR_PATH")
@@ -22,11 +19,6 @@ class Config:
 
     # Chroma Settings
     CHROMA_PERSIST_DIR_PATH = os.getenv("CHROMA_PERSIST_DIR_PATH")
-
-    # Pinecone Settings
-    PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-    PINECONE_ENVIRONMENT = os.getenv("PINECONE_ENVIRONMENT")
-    PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME")
 
     # Google Auth Settings
     GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
@@ -39,19 +31,12 @@ class Config:
     # Validation
     @classmethod
     def validate(cls):
-        if not cls.OPENAI_API_KEY:
-            raise ValueError("OPENAI_API_KEY not found in environment variables")
-        if not cls.ANTHROPIC_API_KEY:
-            raise ValueError("ANTHROPIC_API_KEY not found in environment variables")
-        
         # Ensure persist directory exists
         Path(cls.CHROMA_PERSIST_DIR_PATH).mkdir(parents=True, exist_ok=True)
     
     @classmethod
     def set_environment(cls):
         """Set necessary environment variables"""
-        os.environ["OPENAI_API_KEY"] = cls.OPENAI_API_KEY
-        os.environ["ANTHROPIC_API_KEY"] = cls.ANTHROPIC_API_KEY
         os.environ["CHROMA_PERSIST_DIR_PATH"] = cls.CHROMA_PERSIST_DIR_PATH
         os.environ["KNOWLEDGE_ARTICLES_DIR_PATH"] = cls.KNOWLEDGE_ARTICLES_DIR_PATH
         os.environ["METADATA_FILE_PATH"] = cls.METADATA_FILE_PATH

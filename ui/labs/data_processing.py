@@ -1,6 +1,6 @@
 from ui.labs.app_mode import AppMode
 import streamlit as st
-from data_processing.documet_processor import DocumentProcessor
+from data_processing.document_processor import DocumentProcessor
 from typing import List, Any
 import io
 import zipfile

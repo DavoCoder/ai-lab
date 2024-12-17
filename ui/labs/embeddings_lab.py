@@ -8,6 +8,9 @@ from vector_databases.pinecone_vector_database import PineconeVectorDatabase
 from file_handler.file_change_detector import FileChangeDetector
 import streamlit as st
 from ui.labs.embeddings_visualizer import EmbeddingsVisualizer
+from web_research.web_researcher import WebResearcher
+from langchain.docstore.document import Document
+from data_processing.document_processor import DocumentProcessor
 
 class EmbeddingsLab(AppMode):
 
@@ -16,6 +19,11 @@ class EmbeddingsLab(AppMode):
         # Sidebar configuration
         st.sidebar.header("Embeddings Configuration")
         
+        #Embedding Source Selection
+        embedding_source = st.sidebar.selectbox(
+            "Select Embedding Source",
+            ["Uploaded Documents", "Web Research", "Local Knowledge Base"]
+        )
         # Model Selection
         embedding_provider = st.sidebar.selectbox(
             "Select Embedding Provider",
@@ -43,72 +51,178 @@ class EmbeddingsLab(AppMode):
             ["Local (ChromaDB)", "Pinecone"]
         )
 
-        # Only show document processing for local DB
-        if vector_db_type == "Local (ChromaDB)":
-            st.subheader("Local Document Processing")
+         # Main content area based on source selection
+        if embedding_source == "Uploaded Documents":
+            EmbeddingsLab._handle_uploaded_documents(embedding_model, vector_db_type)
             
-            tabs = st.tabs(["Document Processing", "Visualization"])
+        elif embedding_source == "Web Research":
+            EmbeddingsLab._handle_web_research(embedding_model, vector_db_type)
             
-            with tabs[0]:
-                if embedding_model:
-                    if st.button("Process Documents"):
-                        with st.spinner("Processing documents..."):
-
-                            # Initialize vector DB
-                            vector_db = ChromaVectorDatabase(
-                                persist_directory=Config.CHROMA_PERSIST_DIR_PATH,
-                                embedding_model=embedding_model
-                            )
-                            EmbeddingsLab._process_documents(vector_db)
-                else:
-                    st.warning("Please configure embedding model first.")
-            
-            with tabs[1]:
-                # Add visualization if vector DB exists
-                if os.path.exists(Config.CHROMA_PERSIST_DIR_PATH):
-                    vector_db = ChromaVectorDatabase(
-                        persist_directory=Config.CHROMA_PERSIST_DIR_PATH,
-                        embedding_model=embedding_model
-                    )
-                    
-                    EmbeddingsVisualizer.visualize_embeddings(vector_db)
-                else:
-                    st.warning("No vector database found. Please process some documents first.")
-
-        else:  # Pinecone
-            st.subheader("Pinecone Configuration")
-            #api_key = st.text_input("Pinecone API Key", type="password")
-            api_key = Config.PINECONE_API_KEY
-            #environment = st.text_input("Pinecone Environment")
-            #index_name = st.text_input("Index Name")
-            index_name = Config.PINECONE_INDEX_NAME
-            
-            # Picone implementation TBD
-            if embedding_model:
-                if st.button("Process Documents"):
-                    with st.spinner("Processing documents..."):
-                 
-                        # Initialize vector DB
-                        vector_db = PineconeVectorDatabase(
-                            api_key=api_key,
-                            index_name=index_name,
-                            embedding_model=embedding_model
-                        )
-
-                        EmbeddingsLab._process_documents(vector_db)
-            else:
-                st.warning("Please configure embedding model first.")
-
-        # visualization or analysis tools TBD
-        st.subheader("Embedding Analysis Tools")
-        # tools for visualizing and analyzing embeddings
-        # For example:
-        # - Dimensionality reduction plots
-        # - Similarity search demos
-        # - Embedding statistics
+        else:  # Local Knowledge Base
+            EmbeddingsLab._handle_local_knowledge_base(embedding_model, vector_db_type)
+    
 
     @staticmethod
-    def _process_documents(vector_db):
+    def _handle_local_knowledge_base(embedding_model, vector_db_type):
+        st.subheader("Local Knowledge Base")
+
+        if vector_db_type == "Pinecone":
+            api_key = st.text_input("Pinecone API Key", type="password")
+            index_name = st.text_input("Index Name")
+        else: # Local (ChromaDB)
+            api_key = None
+            index_name = None
+
+        tabs = st.tabs(["Document Processing", "Visualization"])
+
+        if os.path.exists(Config.CHROMA_PERSIST_DIR_PATH):
+            if embedding_model:
+                vector_db = EmbeddingsLab._initialize_vector_db(
+                    vector_db_type, 
+                    embedding_model,
+                    api_key=api_key,
+                    index_name=index_name   
+                )
+
+                with tabs[0]:
+                    if st.button("Process Documents"):
+                        with st.spinner("Processing documents..."):
+                            try:
+                                EmbeddingsLab._process_local_documents(vector_db)
+                            except Exception as e:
+                                st.error(f"Error processing documents: {str(e)}")
+
+                with tabs[1]:
+                    if vector_db_type == "Local (ChromaDB)":
+                        EmbeddingsVisualizer.visualize_embeddings(vector_db)
+            else:
+                st.warning("Please configure embedding model first.")
+        else:
+            st.warning("No vector database found. Please process some documents first.")    
+
+    @staticmethod
+    def _handle_uploaded_documents(embedding_model, vector_db_type):
+        st.subheader("Document Upload")
+        print("vector_db_type: ", vector_db_type)
+        print("embedding_model: ", embedding_model)
+
+        if vector_db_type == "Pinecone":
+            api_key = st.text_input("Pinecone API Key", type="password")
+            index_name = st.text_input("Index Name")
+        else: # Local (ChromaDB)
+            api_key = None
+            index_name = None
+        
+        uploaded_files = st.file_uploader(
+            "Upload Documents", 
+            accept_multiple_files=True,
+            type=["txt", "pdf", "docx"]
+        )
+        
+        if uploaded_files:
+            if st.button("Process Uploaded Documents"):
+                with st.spinner("Processing uploaded documents..."):
+                    try:
+                        vector_db = EmbeddingsLab._initialize_vector_db(
+                            vector_db_type, 
+                            embedding_model,
+                            api_key=api_key,
+                            index_name=index_name   
+                        )
+                        
+                        print("Vector DB initialized")
+                        # Process documents
+                        documents = []
+                        for file in uploaded_files:
+                            content = DocumentProcessor.read_file_content(file)
+                            documents.append(
+                               Document(
+                                    page_content=content,
+                                    metadata={
+                                        "source": file.name,
+                                        "type": "uploaded_document"
+                                    }
+                                )
+                            )
+                        
+                        print("Documents uploaded")
+                        print("Vector DB Load or Initialize")
+                        # Add to vector DB
+                        vector_db.load_or_initialize(documents=[])
+
+                        print("Vector DB Add Documents")
+                        vector_db.add_documents(documents)
+                        st.success(f"Successfully processed {len(documents)} documents")
+                        
+                        
+                    except Exception as e:
+                        st.error(f"Error processing documents: {str(e)}")
+    
+    @staticmethod
+    def _handle_web_research(embedding_model, vector_db_type):
+        st.subheader("Web Research")
+        
+        # Web research configuration
+        search_query = st.text_area("Research Query")
+        urls = st.text_area("Enter URLs (one per line)")
+        
+        if search_query and urls:
+            if st.button("Process Web Content"):
+                with st.spinner("Processing web content..."):
+                    try:
+                        # Initialize vector DB
+                        vector_db = EmbeddingsLab._initialize_vector_db(
+                            vector_db_type, 
+                            embedding_model
+                        )
+                        
+                        # Process web content
+                        web_researcher = WebResearcher()
+                        results = web_researcher.search(
+                            query=search_query,
+                            urls=urls.strip().split('\n'),
+                            model_provider="OpenAI",  # Could be made configurable
+                            model_id="gpt-3.5-turbo"  # Could be made configurable
+                        )
+                        
+                        # Prepare documents
+                        documents = []
+                        for url, content in results.items():
+                            documents.append({
+                                "content": content,
+                                "metadata": {
+                                    "source": url,
+                                    "type": "web_research",
+                                    "query": search_query
+                                }
+                            })
+                        
+                        # Add to vector DB
+                        vector_db.load_or_initialize(documents=[])
+                        vector_db.add_documents(documents)
+                        st.success(f"Successfully processed {len(documents)} web sources")
+                        
+                    except Exception as e:
+                        st.error(f"Error processing web content: {str(e)}")
+
+        
+    @staticmethod
+    def _initialize_vector_db(vector_db_type: str, embedding_model, api_key: str, index_name: str):
+        """Initialize vector database with appropriate configuration."""
+        if vector_db_type == "Local (ChromaDB)":
+            return ChromaVectorDatabase(
+                persist_directory=Config.CHROMA_PERSIST_DIR_PATH,
+                embedding_model=embedding_model
+            )
+        else:  # Pinecone
+            return PineconeVectorDatabase(
+                api_key=api_key,
+                index_name=index_name,
+                embedding_model=embedding_model
+            )
+    
+    @staticmethod
+    def _process_local_documents(vector_db):
         """
         Process documents for embedding generation and storage
         

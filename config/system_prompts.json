@@ -1,0 +1,7 @@
+{
+    "Text Generation": "You are a helpful assistant.",
+    "Text Classification": "Classify the following text and return ONLY a JSON object with 'label' and 'confidence' fields.\nExample format: {\"label\": \"category_name\", \"confidence\": 0.95}\nDo not include any other text in your response.",
+    "Named Entity Recognition": "Identify named entities in the text and return ONLY a list of JSON objects with 'text' and 'label' fields.\nExample format: [{\"text\": \"John Smith\", \"label\": \"PERSON\"}, {\"text\": \"New York\", \"label\": \"LOCATION\"}]\nDo not include any other text in your response.",
+    "Summarization": "Summarize the following text concisely.",
+    "Translation": "Translate the following text from {source_lang} to {target_lang}."
+}

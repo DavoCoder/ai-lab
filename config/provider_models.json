@@ -1,0 +1,116 @@
+{
+    "OpenAI": {
+        "Text Generation": {
+            "models": ["gpt-4", "gpt-3.5-turbo"],
+            "model_ids": {
+                "gpt-4": "gpt-4-0125-preview",
+                "gpt-3.5-turbo": "gpt-3.5-turbo-0125"
+            }
+        },
+        "Text Classification": {
+            "models": ["gpt-4", "gpt-3.5-turbo"],
+            "model_ids": {
+                "gpt-4": "gpt-4-0125-preview",
+                "gpt-3.5-turbo": "gpt-3.5-turbo-0125"
+            }
+        },
+        "Named Entity Recognition": {
+            "models": ["gpt-4", "gpt-3.5-turbo"],
+            "model_ids": {
+                "gpt-4": "gpt-4-0125-preview",
+                "gpt-3.5-turbo": "gpt-3.5-turbo-0125"
+            }
+        },
+        "Summarization": {
+            "models": ["gpt-4", "gpt-3.5-turbo"],
+            "model_ids": {
+                "gpt-4": "gpt-4-0125-preview",
+                "gpt-3.5-turbo": "gpt-3.5-turbo-0125"
+            }
+        },
+        "Translation": {
+            "models": ["gpt-4", "gpt-3.5-turbo"],
+            "model_ids": {
+                "gpt-4": "gpt-4-0125-preview",
+                "gpt-3.5-turbo": "gpt-3.5-turbo-0125"
+            }
+        }
+    },
+    "Anthropic": {
+        "Text Generation": {
+            "models": ["claude-3-opus", "claude-3-sonnet", "claude-3-haiku"],
+            "model_ids": {
+                "claude-3-opus": "claude-3-opus-20240229",
+                "claude-3-sonnet": "claude-3-sonnet-20240229",
+                "claude-3-haiku": "claude-3-haiku-20240307"
+            }
+        },
+        "Text Classification": {
+            "models": ["claude-3-opus", "claude-3-sonnet"],
+            "model_ids": {
+                "claude-3-opus": "claude-3-opus-20240229",
+                "claude-3-sonnet": "claude-3-sonnet-20240229"
+            }
+        },
+        "Named Entity Recognition": {
+            "models": ["claude-3-opus", "claude-3-sonnet"],
+            "model_ids": {
+                "claude-3-opus": "claude-3-opus-20240229",
+                "claude-3-sonnet": "claude-3-sonnet-20240229"
+            }
+        },
+        "Summarization": {
+            "models": ["claude-3-opus", "claude-3-sonnet"],
+            "model_ids": {
+                "claude-3-opus": "claude-3-opus-20240229",
+                "claude-3-sonnet": "claude-3-sonnet-20240229"
+            }
+        },
+        "Translation": {
+            "models": ["claude-3-opus", "claude-3-sonnet"],
+            "model_ids": {
+                "claude-3-opus": "claude-3-opus-20240229",
+                "claude-3-sonnet": "claude-3-sonnet-20240229"
+            }
+        }
+    },
+    "HuggingFace": {
+        "Text Generation": {
+            "models": ["meta-llama/Llama-2-70b", "mistralai/Mixtral-8x7B", "tiiuae/falcon-40b"],
+            "model_ids": {
+                "meta-llama/Llama-2-70b": "meta-llama/Llama-2-70b-chat-hf",
+                "mistralai/Mixtral-8x7B": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+                "tiiuae/falcon-40b": "tiiuae/falcon-40b-instruct"
+            }
+        },
+        "Text Classification": {
+            "models": ["roberta-large", "bert-large-uncased", "xlnet-large-cased"],
+            "model_ids": {
+                "roberta-large": "roberta-large",
+                "bert-large-uncased": "bert-large-uncased",
+                "xlnet-large-cased": "xlnet-large-cased"
+            }
+        },
+        "Named Entity Recognition": {
+            "models": ["jean-baptiste/camembert-ner", "dslim/bert-base-NER"],
+            "model_ids": {
+                "jean-baptiste/camembert-ner": "jean-baptiste/camembert-ner",
+                "dslim/bert-base-NER": "dslim/bert-base-NER"
+            }
+        },
+        "Summarization": {
+            "models": ["facebook/bart-large-cnn", "google/pegasus-large"],
+            "model_ids": {
+                "facebook/bart-large-cnn": "facebook/bart-large-cnn",
+                "google/pegasus-large": "google/pegasus-large"
+            }
+        },
+        "Translation": {
+            "models": ["Helsinki-NLP/opus-mt-en-fr", "facebook/mbart-large-50"],
+            "model_ids": {
+                "Helsinki-NLP/opus-mt-en-fr": "Helsinki-NLP/opus-mt-en-fr",
+                "facebook/mbart-large-50": "facebook/mbart-large-50"
+            }
+        }
+    }
+}

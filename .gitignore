@@ -35,7 +35,6 @@ secrets.toml
 # Data and storage directories
 data/
 chroma_storage/
-*.json
 *.csv
 *.xlsx
 

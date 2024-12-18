@@ -1,0 +1,7 @@
+{
+    "Text Generation": "Generate human-like text based on a prompt",
+    "Text Classification": "Classify text into predefined categories",
+    "Named Entity Recognition": "Identify and classify named entities in text",
+    "Summarization": "Create concise summaries of longer texts",
+    "Translation": "Translate text between different languages"
+}

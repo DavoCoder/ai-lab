@@ -13,7 +13,7 @@ A Retrieval-Augmented Generation (RAG) system that combines document processing,
 
 ## 🚀 Getting Started
 
-### Prerequisites
+### Minimum Prerequisites
 
 - Python 3.10 or 3.11
 - OpenAI API key
@@ -23,7 +23,7 @@ A Retrieval-Augmented Generation (RAG) system that combines document processing,
 
 1. Clone the repository:
 ```bash
-git clone [your-repo-url]
+git clone https://github.com/DavoCoder/ai-playground.git
 cd ai-playground
 ```
 
@@ -44,7 +44,7 @@ pip install -r requirements.txt
 
 - Create a .env file in the root folder
 - Use the .env_example file to get the environment variables needed
-- Fill out the environment variables with your OpenAI key and Anthropic key
+- Fill out the environment variables with your local paths
 - CHROMA_PERSIST_DIR_PATH is a local directory path to create the ChromaDB
 - KNOWLEDGE_ARTICLES_DIR_PATH is a local directory path to get Documents for creating embeddings for the ChromaDB. Files supported .txt
 - METADATA_FILE_PATH is a local file path to store hash maps for identifying changes in the knowledge base article dir and files
@@ -58,7 +58,7 @@ streamlit run app.py
 
 #### FastAPI Backend
 ```bash
-uvicorn main_api:app --reload
+uvicorn rest_api.rag_processor_api:app --reload
 ```
 
 Access the API documentation at `http://localhost:8000/docs`
@@ -67,39 +67,24 @@ Access the API documentation at `http://localhost:8000/docs`
 
 ```
 ai-playground/
+├── config/                  # Configuration
+├── data_processing/         # Data processing
 ├── embeddings/              # Embedding models
 ├── file_handler/            # File handling
 ├── knowledge_base/         # Document processing
+├── nlp_processing/         # NLP processing models
 ├── query_pre_processing/   # Query enhancement
+├── rag/                    # RAG processing
 ├── response_post_processing/   # Post-processing of the response
+├── rest_api/               # REST API (FastAPI)
 ├── retrival_optimization/   # Optimization of the retrival
 ├── toxicity_detection/     # Toxicity detection
+├── ui/                     # UI
 ├── vector_databases/       # Vector storage
+├── web_research/           # Web research
 ├── app.py                 # Streamlit frontend
-├── main_api.py           # FastAPI backend
 ├── embeddings_generation.py # Embeddings generation
 └── requirements.txt      # Project dependencies
-```
-
-## 🔧 Configuration
-
-## 🚀 API Endpoints
-
-- `POST /process-document`: Upload and process new documents
-- `POST /query`: Query the system with natural language questions
-- [Add other endpoints as applicable]
-
-## 💡 Usage Examples
-
-```python
-# Example API call
-import requests
-
-response = requests.post(
-    "http://localhost:8000/query",
-    json={"query": "What is RAG?"}
-)
-print(response.json())
 ```
 
 ## 🤝 Contributing
@@ -125,4 +110,4 @@ DavoCoder
 
 ---
 
-Built with ❤️ by DavoCoder
+Built by DavoCoder

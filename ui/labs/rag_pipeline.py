@@ -84,6 +84,9 @@ class RAGPipeline(AppMode):
                 RAGPipeline.toxicity_option, RAGPipeline.toxicity_api_key,
                 RAGPipeline.preprocess_options, RAGPipeline.postprocess_options
             )
+
+            st.success(f"Using LLM: {RAGPipeline.llm_option}")
+
              # Step 1: Initialize Embeddings        
             ragProcessor.initialize_embeddings()
             st.success(f"Using Embedding Model: {RAGPipeline.embedding_option}")

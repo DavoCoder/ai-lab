@@ -1,0 +1,169 @@
+from langchain_openai import ChatOpenAI
+from langchain_anthropic import ChatAnthropic
+from langchain.chains import RetrievalQA
+from embeddings.openai_embedding_model import OpenAIEmbeddingModel
+from embeddings.huggingface_embedding_model import HuggingFaceEmbeddingModel
+from vector_databases.chroma_vector_database import ChromaVectorDatabase
+from vector_databases.pinecone_vector_database import PineconeVectorDatabase
+from toxicity_detection.huggingface_toxicity_detector import HuggingFaceToxicityDetector
+from toxicity_detection.openai_toxicity_detector import OpenAIToxicityDetector
+from query_pre_processing.spellcheck_query_processor import SpellCheckQueryProcessor
+from query_pre_processing.query_rewriter_processor import QueryRewriterProcessor
+from response_post_processing.hallucination_filter import HallucinationFilter
+from response_post_processing.summarization_post_processor import SummarizationPostProcessor
+from langchain.chains import RetrievalQA
+from langchain_openai import ChatOpenAI
+from langchain_anthropic import ChatAnthropic
+from typing import Dict, Any
+from config import Config
+import logging
+
+class RAGProcessor:
+    """
+    Processes RAG (Retrieval Augmented Generation) operations using LangChain.
+    Handles model initialization, vector stores, and QA chain creation.
+    """
+
+    def __init__(
+        self,
+        llm_option: str,
+        llm_api_key: str,
+        llm_settings: Dict[str, Any],
+        embedding_option: str,
+        embedding_api_key: str,
+        vector_db_option: str,
+        vector_db_api_key: str,
+        vector_db_index: str,
+        toxicity_option: str,
+        toxicity_api_key: str,
+        pre_process_options: list,
+        post_process_options: list,
+    ):
+        self.llm_option = llm_option
+        self.llm_api_key = llm_api_key
+        self.llm_settings = llm_settings
+        self.embedding_option = embedding_option
+        self.embedding_api_key = embedding_api_key
+        self.vector_db_option = vector_db_option
+        self.vector_db_api_key = vector_db_api_key
+        self.vector_db_index = vector_db_index
+        self.toxicity_option = toxicity_option
+        self.toxicity_api_key = toxicity_api_key
+        self.pre_process_options = pre_process_options
+        self.post_process_options = post_process_options
+
+        # Initialize as None, will be set up when needed
+        self.embedding_model = None
+        self.vector_db = None
+        self.toxicity_detector = None
+        self.llm = None
+        self.retriever = None
+        self.qa_chain = None
+
+        logging.info(f"Initializing RAGProcessor with LLM: {llm_option}, Embedding: {embedding_option}, Vector DB: {vector_db_option}")
+
+    def initialize_and_execute_all(self, user_query: str) -> str:
+        logging.info(f"Processing query: {user_query}")
+        self.initialize_embeddings()
+        self.initialize_vector_db()
+        self.initialize_toxicity_detector()
+       
+        processed_user_query = self.apply_pre_processing(user_query)
+        logging.info(f"Processed query: {processed_user_query}")
+          
+        if self.apply_toxicity_detection(processed_user_query):
+            logging.warning(f"Toxic content detected in processed query: {processed_user_query}")
+            return "Query contains toxic content. Aborting."
+          
+        response = self.execute_qa_chain(processed_user_query)
+        logging.info(f"Raw response from QA chain: {response}")
+        
+        response = self.apply_post_processing(response, processed_user_query)
+        logging.info(f"Final processed response: {response}")
+
+        return response
+    
+    def _get_llm(self):
+        if "Anthropic Claude" in self.llm_option:
+            return ChatAnthropic(
+                model="claude-3-opus-20240229" if "Opus" in self.llm_option else "claude-3-sonnet-20240229",
+                anthropic_api_key=self.llm_api_key,
+                temperature=self.llm_settings.get("temperature", 0.7),
+                max_tokens=self.llm_settings.get("max_tokens", 500)
+            )
+        elif "OpenAI GPT" in self.llm_option:
+            return ChatOpenAI(
+                api_key=self.llm_api_key,
+                model="gpt-4" if "GPT-4" in self.llm_option else "gpt-3.5-turbo",
+                temperature=self.llm_settings.get("temperature", 0.7),
+                max_tokens=self.llm_settings.get("max_tokens", 500)
+            )
+        else:
+            raise ValueError(f"Unsupported model: {self.model_name}")
+
+    def initialize_embeddings(self) -> None:
+        logging.info(f"Initializing embeddings with option: {self.embedding_option}")
+        """Initialize the embedding model."""
+        if self.embedding_option == "OpenAI":
+            self.embedding_model = OpenAIEmbeddingModel(api_key=self.embedding_api_key).load_model()
+        elif self.embedding_option == "HuggingFace":
+            self.embedding_model = HuggingFaceEmbeddingModel(model_name="all-MiniLM-L6-v2").load_model()
+
+    def initialize_vector_db(self) -> None:
+        logging.info(f"Initializing vector database: {self.vector_db_option}")
+        """Create a new vector store or load existing one."""
+        if self.embedding_model is None:
+            self.initialize_embeddings()
+        
+        if self.vector_db_option == "ChromaDB":
+            self.vector_db = ChromaVectorDatabase(persist_directory=Config.CHROMA_PERSIST_DIR_PATH, 
+                                                  embedding_model=self.embedding_model)
+        elif self.vector_db_option == "Pinecone":
+            self.vector_db = PineconeVectorDatabase(index_name=self.vector_db_index, 
+                                                    embedding_model=self.embedding_model,
+                                                    api_key=self.vector_db_api_key)
+        else:
+            raise ValueError("Unsupported vector database option")
+        
+    def initialize_toxicity_detector(self):
+        logging.info(f"Initializing toxicity detector: {self.toxicity_option}")
+        if self.toxicity_option == "OpenAI":
+            self.toxicity_detector = OpenAIToxicityDetector(api_key=self.toxicity_api_key)
+        elif self.toxicity_option == "HuggingFace":
+            self.toxicity_detector = HuggingFaceToxicityDetector()
+
+    def apply_toxicity_detection(self, user_query: str) -> str:
+        if self.toxicity_detector:
+            return self.toxicity_detector.detect_toxicity(user_query)
+        return False
+
+    def apply_pre_processing(self, user_query: str) -> str:
+        logging.info(f"Applying pre-processing steps: {self.pre_process_options}")
+        for option in self.pre_process_options:
+            if option == "Spell Check":
+                query_processor = SpellCheckQueryProcessor()
+                user_query = query_processor.process(user_query)
+            elif option == "Query Rewriter":
+                query_processor = QueryRewriterProcessor()
+                user_query = query_processor.process(user_query)
+        return user_query
+    
+    def execute_qa_chain(self, user_query: str) -> str:
+        logging.info("Executing QA chain")
+        self.vector_db.load_or_initialize(documents=[])
+        self.retriever = self.vector_db.get_retriever(k=3)
+        self.llm = self._get_llm()
+        self.qa_chain = RetrievalQA.from_chain_type(llm=self.llm, chain_type="stuff", retriever=self.retriever)
+       
+        return self.qa_chain.invoke(user_query)["result"]
+
+    def apply_post_processing(self, response: str, user_query: str) -> str:
+        logging.info(f"Applying post-processing steps: {self.post_process_options}")
+        for option in self.post_process_options:
+            if option == "Hallucination Filter":
+                post_processor = HallucinationFilter()
+                response = post_processor.process(response, self.retriever.get_relevant_documents(user_query))
+            elif option == "Summarization":
+                post_processor = SummarizationPostProcessor()
+                response = post_processor.process(response, None)
+        return response

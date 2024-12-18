@@ -1,4 +1,5 @@
 import streamlit as st
+import logging
 from config import Config
 from ui.auth.authenticator_manager import AuthenticationManager
 from ui.auth.email_password_authenticator import EmailPasswordAuthenticator
@@ -62,6 +63,18 @@ else:
         - [Examples](link)
         - [GitHub Repo](link)
         """)
+
+
+
+#   Configure logging
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.StreamHandler(),  # Console output
+            logging.FileHandler('all_logs.log')  # File output
+        ]
+    )
 
     # System Status
     st.sidebar.markdown("---")

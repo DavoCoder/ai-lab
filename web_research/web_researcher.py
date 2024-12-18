@@ -1,34 +1,33 @@
+import logging
 from typing import Dict, Any, List, Tuple
 import requests
 from bs4 import BeautifulSoup
 from openai import OpenAI
 from anthropic import Anthropic
 
+# Set up logger
+logger = logging.getLogger(__name__)
+
 class WebResearcher:
     def __init__(self):
+        logger.debug("Initializing WebResearcher")
         pass
 
     def search(self, query: str, urls: List[str], model_provider: str, model_id: str, 
                depth: int = 2, include_citations: bool = True, api_key: str = None) -> Dict[str, Any]:
-        """
-        Perform web research based on query and URLs.
+        """Perform web research based on query and URLs."""
+        logger.info("Starting web research for query: '%s' with %d URLs", query, len(urls))
         
-        Args:
-            query (str): Research query
-            urls (List[str]): List of URLs to research
-            model_provider (str): LLM provider (OpenAI or Anthropic)
-            model_id (str): Specific model ID to use
-            depth (int): Search depth (1-5)
-            include_citations (bool): Whether to include citations
+        # Ensure urls is a list
+        if isinstance(urls, str):
+            logger.debug("Converting single URL string to list")
+            urls = [urls]
             
-        Returns:
-            Dict[str, Any]: Research results including synthesis and sources
-        """
         try:
             # Process URLs and gather sources
             sources = self.perform_research(
                 query=query,
-                urls=urls,
+                urls=urls,  # Now guaranteed to be a list
                 model_provider=model_provider,
                 model_id=model_id,
                 depth=depth,
@@ -45,46 +44,45 @@ class WebResearcher:
                 api_key=api_key
             )
             
+            logger.info("Successfully completed web research")
             return {
                 "synthesis": synthesis,
                 "sources": sources
             }
             
         except Exception as e:
-            print(f"Error during research: {str(e)}")
+            logger.error("Error during research: %s", str(e), exc_info=True)
             return {"synthesis": "", "sources": []}
 
     @staticmethod
     def perform_research(query: str, urls: List[str], model_provider: str, 
                          model_id: str, depth: int, api_key: str = None) -> list:
-        """
-        Performs web research based on the query and URLs.
-        
-        Args:
-            query (str): The research query
-            urls (List[str]): List of URLs to process
-            model_provider (str): The LLM provider to use
-            model_id (str): The specific model ID to use
-            depth (int): How deep to search (1-5)
-        
-        Returns:
-            list: List of dictionaries containing source information and content
-        """
+        """Performs web research based on the query and URLs."""
+        logger.info("Performing research with depth %d", depth)
         sources = []
         
         try:
             if not urls:
-                print("No URLs provided.")
+                logger.warning("No URLs provided")
                 return []
-                
+            
+            # Ensure urls is a list of strings
+            if isinstance(urls, str):
+                urls = [urls]
+
             # Process each URL
-            print("Extracting content from sources...")
+            logger.info("Extracting content from %d sources...", len(urls))
             for url in urls:
+                if not isinstance(url, str):
+                    logger.warning("Skipping invalid URL type: %s", type(url))
+                    continue
                 try:
                     # Fetch and parse content
+                    logger.info("Processing URL: %s", url)
                     content = WebResearcher._fetch_and_parse_url(url)
                     
                     if not content:
+                        logger.warning("No content extracted from URL: %s", url)
                         continue
                     
                     # Evaluate content relevance using LLM
@@ -97,29 +95,33 @@ class WebResearcher:
                     )
                     
                     if relevance_score > 0.5:  # Threshold for relevance
+                        logger.debug("Content relevant (score: %.2f) for URL: %s", relevance_score, url)
                         sources.append({
                             "url": url,
                             "title": WebResearcher._extract_title(content),
                             "content": filtered_content,
                             "relevance_score": relevance_score
                         })
+                    else:
+                        logger.debug("Content not relevant (score: %.2f) for URL: %s", relevance_score, url)
                         
                 except Exception as e:
-                    print(f"Error processing {url}: {str(e)}")
+                    logger.error("Error processing %s: %s", url, str(e), exc_info=True)
                     continue
                     
             # Sort sources by relevance
             sources.sort(key=lambda x: x['relevance_score'], reverse=True)
-            
+            logger.info("Successfully processed %d relevant sources", len(sources))
             return sources
             
         except Exception as e:
-            print(f"Error during research: {str(e)}")
+            logger.error("Error during research: %s", str(e), exc_info=True)
             return []
 
     @staticmethod
     def _fetch_and_parse_url(url: str) -> str:
         """Fetches and parses content from a URL."""
+        logger.debug("Fetching content from URL: %s", url)
         try:
             # Add headers to mimic browser request
             headers = {
@@ -144,11 +146,14 @@ class WebResearcher:
                 # Clean text
                 text = ' '.join(main_content.stripped_strings)
                 text = ' '.join(text.split())  # Normalize whitespace
+                logger.debug("Successfully extracted content from URL: %s", url)
                 return text
+                
+            logger.warning("No main content found for URL: %s", url)
             return ""
             
         except Exception as e:
-            print(f"Error fetching {url}: {str(e)}")
+            logger.error("Error fetching %s: %s", url, str(e), exc_info=True)
             return ""
 
     @staticmethod
@@ -162,19 +167,17 @@ class WebResearcher:
             h1 = soup.find('h1')
             if h1:
                 return h1.text.strip()
+            logger.warning("No title found in content, using default")
             return "Untitled Document"
-        except:
+        except Exception as e:
+            logger.error("Error extracting title: %s", str(e), exc_info=True)
             return "Untitled Document"
 
     @staticmethod
     def _evaluate_content(content: str, query: str, 
                          model_provider: str, model_id: str, api_key: str = None) -> Tuple[float, str]:
-        """
-        Evaluates content relevance and filters it using LLM.
-        
-        Returns:
-            tuple: (relevance_score, filtered_content)
-        """
+        """Evaluates content relevance and filters it using LLM."""
+        logger.debug("Evaluating content relevance using %s model: %s", model_provider, model_id)
         try:
             # Prepare prompt for content evaluation
             prompt = f"""
@@ -212,6 +215,7 @@ class WebResearcher:
                 result = response.content[0].text
                 
             else:
+                logger.error("Unsupported model provider: %s", model_provider)
                 raise ValueError(f"Unsupported model provider: {model_provider}")
                 
             # Parse response
@@ -222,33 +226,25 @@ class WebResearcher:
                 relevance_score = float(score_line.split(':')[1].strip())
                 filtered_content = content_line.split(':')[1].strip()
                 
+                logger.debug("Content evaluation complete. Relevance score: %.2f", relevance_score)
                 return relevance_score, filtered_content
                 
-            except:
+            except Exception as e:
+                logger.error("Error parsing LLM response: %s", str(e), exc_info=True)
                 return 0.0, ""
                 
         except Exception as e:
-            print(f"Error evaluating content: {str(e)}")
+            logger.error("Error evaluating content: %s", str(e), exc_info=True)
             return 0.0, ""
 
     @staticmethod
     def synthesize_research(sources: list, query: str, include_citations: bool,
                            model_provider: str, model_id: str, api_key: str = None) -> str:
-        """
-        Synthesizes the research findings into a coherent summary.
-        
-        Args:
-            sources (list): List of source dictionaries
-            query (str): Original research query
-            include_citations (bool): Whether to include citations
-            model_provider (str): The LLM provider to use
-            model_id (str): The specific model ID to use
-            
-        Returns:
-            str: Synthesized research findings
-        """
+        """Synthesizes the research findings into a coherent summary."""
+        logger.info("Synthesizing research findings from %d sources", len(sources))
         try:
             if not sources:
+                logger.warning("No sources available for synthesis")
                 return "No relevant sources found."
                 
             # Prepare content for synthesis
@@ -291,10 +287,12 @@ class WebResearcher:
                 synthesis = response.content[0].text
                 
             else:
+                logger.error("Unsupported model provider: %s", model_provider)
                 raise ValueError(f"Unsupported model provider: {model_provider}")
                 
+            logger.info("Successfully synthesized research findings")
             return synthesis
             
         except Exception as e:
-            print(f"Error synthesizing research: {str(e)}")
+            logger.error("Error synthesizing research: %s", str(e), exc_info=True)
             return "Error synthesizing research findings."

@@ -31,6 +31,9 @@ auth_manager = st.session_state.auth_manager
 if not auth_manager.is_authenticated():
     auth_manager.login_form()
 else:
+    #st.set_page_config(
+    #    layout="wide"  
+    #)
     # Show the main application
     st.sidebar.title("AI Lab")
     

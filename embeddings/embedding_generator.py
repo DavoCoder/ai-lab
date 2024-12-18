@@ -36,6 +36,7 @@ class EmbeddingGenerator:
         self.web_research_provider = web_research_provider
         self.web_research_model_id = web_research_model_id
         self.web_research_provider_api_key = web_research_provider_api_key
+        
         self.embedding_model = None
         self.vector_db = None
 

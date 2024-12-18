@@ -12,7 +12,7 @@ class Home(AppMode):
             # Read the markdown content
             with open(docs_path, 'r', encoding='utf-8') as f:
                 content = f.read()
-                
+            
             # Render the markdown
             st.markdown(content, unsafe_allow_html=True)
             

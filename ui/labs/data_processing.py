@@ -8,8 +8,6 @@ import json
 from pathlib import Path
 
 class DataProcessing(AppMode):
-    def __init__(self):
-        self.processor = DocumentProcessor()
 
     @staticmethod
     def render():
@@ -229,13 +227,3 @@ class DataProcessing(AppMode):
                     file_name="batch_results.zip",
                     mime="application/zip"
                 )
-
-    @staticmethod
-    def _show_error_message(error: str):
-        """Helper method to display error messages consistently."""
-        st.error(f"Error: {error}")
-
-    @staticmethod
-    def _show_success_message(message: str):
-        """Helper method to display success messages consistently."""
-        st.success(message)

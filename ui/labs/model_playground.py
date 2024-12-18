@@ -2,6 +2,7 @@ from ui.labs.app_mode import AppMode
 import streamlit as st
 from typing import Dict, Any
 from nlp_processing.nlp_processor import NLPProcessor
+
 class ModelPlayground(AppMode):
     # Model mappings for different providers and tasks
     @staticmethod
@@ -33,7 +34,7 @@ class ModelPlayground(AppMode):
             api_key = st.sidebar.text_input(f"{model_provider} API Key", type="password")
         
         # Advanced Settings
-        with st.sidebar.expander("Advanced Settings"):
+        with st.sidebar.expander("Advanced Settings", expanded=True):
             settings = ModelPlayground._render_advanced_settings(task_type)
         
         # Main content area

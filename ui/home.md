@@ -2,121 +2,115 @@
 
 Welcome to the AI Lab! This platform is designed for technical users to experiment with various AI concepts and tools. Here's what you can explore:
 
-## 🔍 RAG Pipeline
+# AI Labs Guide 🧪
 
-### What you can do:
-- Test different Large Language Models (GPT-4, GPT-3.5, Claude-3)
-- Upload your own documents for knowledge base creation
-- Compare different retrieval strategies
-- Fine-tune prompt templates
+## Overview of App Modes
 
-### Limitations:
-- Document size limits (typically <2MB per file)
-- Rate limits based on API provider
-- Processing time for large documents
+### 1. Model Playground 🤖
+An interactive sandbox environment where you can experiment with state-of-the-art language models to generate human-like text, perform text classification for sentiment and topics, identify named entities like people and organizations, create both extractive and abstractive summaries of documents, and translate content between multiple languages while preserving context and technical terminology.
 
-## 🧬 Embeddings Laboratory
+### 2. Web Research Lab 🔍
+A comprehensive research assistant that automatically crawls and analyzes web content, synthesizes information from multiple sources while resolving contradictions, generates properly formatted citations with credibility scoring, and performs detailed source evaluation including authority assessment and bias detection.
 
-### What you can do:
-- Generate embeddings using different models (OpenAI, HuggingFace)
-- Visualize document embeddings in 2D/3D space
-- Test similarity search
-- Compare embedding model performance
+### 3. Data Processing Lab 🛠️
+A sophisticated text processing pipeline that handles everything from basic cleaning operations like noise removal and character encoding fixes to advanced operations such as semantic document chunking, format conversion with metadata preservation, and automated extraction of document attributes including authors, dates, and topics.
 
-### Limitations:
-- Local storage constraints for embeddings
-- Processing time for large document sets
-- Memory requirements for visualization
+### 4. Knowledge Base Lab 📚
+A centralized document management system offering structured storage with version control, automated content categorization and tagging, full-text search capabilities powered by semantic similarity, and flexible organization options including custom taxonomies and cross-referencing between related documents.
 
-## 🌐 Web Research Assistant
+### 5. Embeddings Lab 📊
+A specialized workspace for creating and managing vector representations of text, featuring multiple embedding model options, interactive visualization tools for exploring semantic relationships, and comprehensive vector database management capabilities including index optimization and performance monitoring.
 
-### What you can do:
-- Automate web research tasks
-- Extract and summarize content
-- Compare different sources
+### 6. RAG Pipeline 🔄
+An end-to-end Retrieval-Augmented Generation system that combines semantic search and context-aware document retrieval, efficient embedding generation with optimized chunking strategies, seamless LLM integration for context injection and response formatting, and configurable pre/post-processing options for quality control and validation.
 
-### Limitations:
-- Website access restrictions
-- Rate limiting from web sources
-- HTML parsing limitations
 
-## 🤖 Model Playground
+## How to Use Each Mode
 
-### What you can do:
-- Experiment with different AI models
-- Compare model outputs
-- Test various parameters and settings
+### Model Playground
+1. **Required API Keys:**
+   - OpenAI API key (for GPT models)
+   - Anthropic API key (for Claude models)
 
-### Limitations:
-- API costs for commercial models
-- Processing time for larger requests
-- Model-specific limitations
+2. **Setup Steps:**
+   - Select task type
+   - Choose model provider
+   - Configure model settings
+   - Input your text
+   - Process and view results
 
-## ⚙️ Data Processing Hub
+### Web Research Lab
+1. **Required API Keys:**
+   - Research model API key (OpenAI/Anthropic)
+   - Synthesis model API key (can be same as research)
 
-### What you can do:
-- Clean and preprocess text data
-- Convert between different formats
-- Extract metadata from documents
+2. **Steps:**
+   ```
+   - Enter research query
+   - Provide URLs or select search type
+   - Configure research depth
+   - Choose citation preferences
+   - Run research
+   ```
 
-### Limitations:
-- File size restrictions
-- Supported format limitations
-- Processing time for batch operations
 
-## 📊 Best Practices
+### Data Processing Lab
+1. **Processing Options:**
+   - Text cleaning
+   - Document splitting
+   - Format conversion
+   - Metadata extraction
+   - Batch processing
 
-1. **Start Small**
-   - Begin with small documents/datasets
-   - Test with sample data before large-scale processing
+2. **Output Formats:**
+   ```
+   - TXT
+   - JSON
+   - CSV
+   - HTML
+   ```
 
-2. **Monitor Resources**
-   - Keep track of API usage
-   - Monitor processing time
-   - Check storage usage
+### Knowledge Base Lab
+1. **Features:**
+   - Document upload
+   - File management
+   - Content organization
+   - Document deletion
 
-3. **Iterative Testing**
-   - Compare different models
-   - Test various parameters
-   - Document your findings
+2. **Supported Files:**
+   ```
+   - PDF
+   - TXT
+   - DOCX
+   - MD
+   ```
 
-## 🔒 Security Notes
+### Embeddings Lab
+1. **Required Components:**
+   - Embedding model API key (if using OpenAI)
+   - Vector database credentials (if using Pinecone)
 
-- API keys are securely stored
-- Documents are processed locally when possible
-- No data is shared with third parties
+2. **Options:**
+   ```
+   - Upload documents
+   - Process web content
+   - Manage local knowledge base
+   - Visualize embeddings
+   ```
 
-## 💡 Tips for Getting Started
+### RAG Pipeline
+1. **Required Components:**
+   - LLM API key (OpenAI/Anthropic)
+   - Embedding model API key
+   - Vector database (Pinecone API key if not using local)
 
-1. **RAG Pipeline**
-   - Start with small PDF documents
-   - Test different chunk sizes
-   - Compare model responses
-
-2. **Embeddings Lab**
-   - Begin with a small set of related documents
-   - Observe clustering in visualization
-   - Test similarity with known related content
-
-3. **Web Research**
-   - Start with specific, focused queries
-   - Use rate limiting options
-   - Compare different summarization lengths
-
-## 🛠️ Technical Requirements
-
-- Modern web browser
-- Stable internet connection
-- API keys for commercial services
-- Sufficient local storage
-
-## 📝 Feedback and Issues
-
-If you encounter any issues or have suggestions:
-1. Check the limitations section
-2. Verify your inputs meet the requirements
-3. Contact support with specific details
-
+2. **Configuration:**
+   ```
+   - Select LLM model
+   - Choose embedding model
+   - Configure vector database
+   - Set up pre/post processing options
+   ```
 ---
 
 *Note: This lab is for experimental purposes. For production use cases, additional considerations and optimizations may be needed.*

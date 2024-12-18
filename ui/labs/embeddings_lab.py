@@ -1,9 +1,9 @@
-import os
 import streamlit as st
 from ui.labs.app_mode import AppMode
 from embeddings.huggingface_embedding_model import HuggingFaceEmbeddingModel
 from ui.labs.embeddings_visualizer import EmbeddingsVisualizer
 from embeddings.embedding_generator import EmbeddingGenerator
+
 class EmbeddingsLab(AppMode):
 
     embedding_provider = None

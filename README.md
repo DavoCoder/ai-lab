@@ -1,6 +1,6 @@
-# RAG Pipeline
+# 🧪 AI Lab
 
-A Retrieval-Augmented Generation (RAG) system that combines document processing, vector storage, and large language models to provide accurate, context-aware responses to queries.
+An experimental platform for technical users to explore various AI concepts and tools, featuring a comprehensive suite of labs including Model Playground, Web Research, Data Processing, Knowledge Base management, Embeddings generation, and Retrieval-Augmented Generation (RAG) pipelines.
 
 ## 🌟 Features
 

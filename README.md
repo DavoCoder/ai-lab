@@ -4,12 +4,41 @@ A Retrieval-Augmented Generation (RAG) system that combines document processing,
 
 ## 🌟 Features
 
-- **Document Processing**: Support for various document formats
-- **Vector Database Integration**: Efficient storage and retrieval of document embeddings
-- **Query Pre-processing**: Advanced query rewriting and spell checking
-- **Multiple LLM Support**: Integration with OpenAI's GPT models
-- **FastAPI Backend**: RESTful API for easy integration
-- **Modular Architecture**: Easy to extend and customize
+- **Model Playground**: Interactive environment for:
+  - Text generation and classification
+  - Named entity recognition
+  - Document summarization
+  - Multi-language translation
+
+- **Web Research Lab**: Automated research assistant with:
+  - Web content crawling and analysis
+  - Multi-source information synthesis
+  - Citation generation with credibility scoring
+  - Source evaluation and bias detection
+
+- **Data Processing Lab**: Advanced text processing pipeline for:
+  - Document cleaning and normalization
+  - Semantic document chunking
+  - Format conversion with metadata preservation
+  - Automated attribute extraction
+
+- **Knowledge Base Lab**: Document management system featuring:
+  - Version-controlled storage
+  - Automated content categorization
+  - Semantic search capabilities
+  - Custom taxonomies and cross-referencing
+
+- **Embeddings Lab**: Vector representation workspace offering:
+  - Multiple embedding model options
+  - Interactive visualization tools
+  - Vector database management
+  - Index optimization and monitoring
+
+- **RAG Pipeline**: End-to-end system combining:
+  - Semantic search and context-aware retrieval
+  - Optimized embedding generation
+  - LLM integration for response generation
+  - Configurable pre/post-processing
 
 ## 🚀 Getting Started
 

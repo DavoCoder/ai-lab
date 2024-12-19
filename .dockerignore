@@ -1,0 +1,19 @@
+# Exclude Git repository
+.git
+
+# Exclude Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.log
+*.env
+
+# Exclude logs
+logs/
+
+# Exclude virtual environments
+venv/
+.env/

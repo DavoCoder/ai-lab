@@ -52,8 +52,8 @@ An experimental platform for technical users to explore various AI concepts and 
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/DavoCoder/ai-playground.git
-cd ai-playground
+git clone https://github.com/DavoCoder/ai-lab.git
+cd ai-lab
 ```
 
 2. Create and activate a virtual environment:
@@ -95,7 +95,7 @@ Access the API documentation at `http://localhost:8000/docs`
 ## 🏗️ Project Structure
 
 ```
-ai-playground/
+ai-lab/
 ├── config/                  # Configuration
 ├── data_processing/         # Data processing
 ├── embeddings/              # Embedding models

@@ -37,6 +37,25 @@ def setup_authentication():
     return auth_manager
 
 
+st.set_page_config(
+    page_title="AI Lab",
+    page_icon="🧪",
+    menu_items={
+        'Get Help': 'https://github.com/DavoCoder/ai-lab',
+        'Report a bug': "https://github.com/DavoCoder/ai-lab/issues",
+        'About': """
+        # AI Lab 🧪
+        
+        An experimental platform for exploring AI concepts and tools.
+        
+        Version: 1.0.0
+        
+        Created by: DavoCoder
+        
+        [GitHub Repository](https://github.com/DavoCoder/ai-lab)
+        """
+    }
+)
 if 'auth_manager' not in st.session_state:
     st.session_state.auth_manager = setup_authentication()
     
@@ -46,9 +65,6 @@ auth_manager = st.session_state.auth_manager
 if not auth_manager.is_authenticated():
     auth_manager.login_form()
 else:
-    #st.set_page_config(
-    #    layout="wide"  
-    #)
     # Show the main application
     st.sidebar.title("AI Lab")
     
@@ -77,9 +93,9 @@ else:
     # Help & Documentation
     with st.sidebar.expander("Help & Documentation"):
         st.markdown("""
-        - [Documentation](link)
-        - [Examples](link)
-        - [GitHub Repo](link)
+        - [Documentation](https://github.com/DavoCoder/ai-lab)
+        - [Examples](https://github.com/DavoCoder/ai-lab)
+        - [GitHub Repo](https://github.com/DavoCoder/ai-lab)
         """)
 
 

@@ -17,10 +17,11 @@ env/
 Pipfile
 Pipfile.lock
 
-# Dependency files (optional, if you regenerate them)
+# Dependency files
 *.egg-info/
 dist/
 build/
+build.sh
 *.whl
 
 # IDEs and editors

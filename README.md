@@ -74,9 +74,12 @@ pip install -r requirements.txt
 - Create a .env file in the root folder
 - Use the .env_example file to get the environment variables needed
 - Fill out the environment variables with your local paths
-- CHROMA_PERSIST_DIR_PATH is a local directory path to create the ChromaDB
-- KNOWLEDGE_ARTICLES_DIR_PATH is a local directory path to get Documents for creating embeddings for the ChromaDB. Files supported .txt
-- METADATA_FILE_PATH is a local file path to store hash maps for identifying changes in the knowledge base article dir and files
+
+| Environment Variable | Description | Supported Files |
+|---------------------|-------------|-----------------|
+| CHROMA_PERSIST_DIR_PATH | Local directory path to create the ChromaDB | - |
+| KNOWLEDGE_ARTICLES_DIR_PATH | Local directory path to get Documents for creating embeddings for the ChromaDB | .txt |
+| METADATA_FILE_PATH | Local file path to store hash maps for identifying changes in the knowledge base article dir and files | - |
 
 ### Running the Application
 

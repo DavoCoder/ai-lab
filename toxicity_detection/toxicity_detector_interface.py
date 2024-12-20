@@ -31,4 +31,4 @@ class ToxicityDetector(ABC):
         Returns:
             bool: True if toxic content is detected, otherwise False.
         """
-        pass
+

@@ -21,7 +21,6 @@ class ExternalKnowledgeBase(ABC):
         """
         Establish a connection to the external knowledge base.
         """
-        pass
 
     @abstractmethod
     def fetch_documents(self):
@@ -30,7 +29,6 @@ class ExternalKnowledgeBase(ABC):
         Returns:
             List of documents.
         """
-        pass
 
     @abstractmethod
     def detect_updates(self):
@@ -39,4 +37,4 @@ class ExternalKnowledgeBase(ABC):
         Returns:
             List of new or updated documents.
         """
-        pass
+

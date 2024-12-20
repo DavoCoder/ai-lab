@@ -23,14 +23,11 @@ class AuthenticationProvider(ABC):
     @abstractmethod
     def authenticate(self) -> Optional[UserSession]:
         """Authenticate user and return session data if successful"""
-        pass
-    
+
     @abstractmethod
     def logout(self) -> None:
         """Handle logout process"""
-        pass
     
     @abstractmethod
     def is_authenticated(self) -> bool:
         """Check if current session is authenticated"""
-        pass

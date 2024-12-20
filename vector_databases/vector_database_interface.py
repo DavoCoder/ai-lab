@@ -23,7 +23,6 @@ class VectorDatabase(ABC):
         Args:
             documents (list): Documents to add during initialization.
         """
-        pass
 
     @abstractmethod
     def add_documents(self, documents):
@@ -32,7 +31,6 @@ class VectorDatabase(ABC):
         Args:
             documents (list): List of documents to add.
         """
-        pass
 
     @abstractmethod
     def delete_documents(self, document_ids):
@@ -41,7 +39,6 @@ class VectorDatabase(ABC):
         Args:
             document_ids (list): List of document IDs to delete.
         """
-        pass
 
     @abstractmethod
     def get_retriever(self, k=3):
@@ -50,4 +47,3 @@ class VectorDatabase(ABC):
         Args:
             k (int): Number of top results to retrieve.
         """
-        pass

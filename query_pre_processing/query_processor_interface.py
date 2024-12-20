@@ -31,4 +31,4 @@ class QueryProcessor(ABC):
         Returns:
             str: The processed or augmented query.
         """
-        pass
+

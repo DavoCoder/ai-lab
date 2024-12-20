@@ -14,7 +14,7 @@
 
 # api_external_knowledge_base.py
 import requests
-from external_knowledge_base_interface import ExternalKnowledgeBase
+from knowledge_base.external_knowledge_base_interface import ExternalKnowledgeBase
 
 class APIKnowledgeBase(ExternalKnowledgeBase):
     def __init__(self, api_url, api_key=None):

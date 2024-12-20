@@ -13,8 +13,8 @@
 # limitations under the License.
 
 # google_authenticator.py
-import streamlit as st
 from typing import Optional
+import streamlit as st
 from google_auth_oauthlib.flow import Flow
 from ui.auth.auth_provider_interface import AuthenticationProvider
 from ui.auth.user_session import UserSession

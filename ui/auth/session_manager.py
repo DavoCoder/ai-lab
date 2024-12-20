@@ -13,8 +13,8 @@
 # limitations under the License.
 
 # session_manager.py
-import streamlit as st
 from typing import Optional
+import streamlit as st
 from ui.auth.user_session import UserSession
 
 class SessionManager:

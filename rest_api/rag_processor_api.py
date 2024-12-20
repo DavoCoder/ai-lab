@@ -129,7 +129,7 @@ async def process_query(
         raise HTTPException(
             status_code=500,
             detail=f"Error processing query: {str(e)}"
-        )
+        ) from e
 
 @app.get(
     "/api/v1/rag/options",

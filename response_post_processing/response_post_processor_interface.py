@@ -32,4 +32,4 @@ class ResponsePostProcessor(ABC):
         Returns:
             str: The processed response.
         """
-        pass
+

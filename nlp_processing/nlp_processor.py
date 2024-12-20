@@ -125,7 +125,7 @@ class NLPProcessor:
             return NLPProcessor._parse_model_response(task_type, result)
 
         except Exception as e:
-            raise Exception(f"OpenAI API error: {str(e)}")
+            raise Exception(f"OpenAI API error: {str(e)}") from e
 
     @staticmethod
     def _process_anthropic(task_type: str, model: str, input_text: str, 
@@ -148,4 +148,4 @@ class NLPProcessor:
             return NLPProcessor._parse_model_response(task_type, result)
 
         except Exception as e:
-            raise Exception(f"Anthropic API error: {str(e)}")
+            raise Exception(f"Anthropic API error: {str(e)}") from e

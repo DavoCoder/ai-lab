@@ -66,7 +66,7 @@ class Config:
             with open(config_path, 'r') as f:
                 return json.load(f)
         except Exception as e:
-            raise Exception(f"Error loading configuration {filename}: {str(e)}")
+            raise Exception(f"Error loading configuration {filename}: {str(e)}") from e
 
     @classmethod
     def load_all_configs(cls) -> Dict[str, Dict[str, Any]]:
@@ -79,4 +79,4 @@ class Config:
                 "system_prompts": cls.load_config("system_prompts.json")
             }
         except Exception as e:
-            raise Exception(f"Error loading configurations: {str(e)}")
+            raise Exception(f"Error loading configurations: {str(e)}") from e

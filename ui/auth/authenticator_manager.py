@@ -13,8 +13,8 @@
 # limitations under the License.
 
 # authenticator_manager.py
-import streamlit as st
 from typing import Dict
+import streamlit as st
 from ui.auth.auth_provider_interface import AuthenticationProvider
 from ui.auth.session_manager import SessionManager
 

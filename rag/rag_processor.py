@@ -125,8 +125,10 @@ class RAGProcessor:
             self.embedding_model = HuggingFaceEmbeddingModel(model_name="all-MiniLM-L6-v2").load_model()
 
     def initialize_vector_db(self) -> None:
-        logging.info(f"Initializing vector database: {self.vector_db_option}")
         """Create a new vector store or load existing one."""
+        
+        logging.info(f"Initializing vector database: {self.vector_db_option}")
+        
         if self.embedding_model is None:
             self.initialize_embeddings()
         

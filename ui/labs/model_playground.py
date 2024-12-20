@@ -117,13 +117,13 @@ class ModelPlayground(AppMode):
     def _render_input_area(task_type: str) -> str:
         if task_type == "Text Generation":
             return st.text_area("Enter your prompt:", height=100)
-        elif task_type == "Text Classification":
+        if task_type == "Text Classification":
             return st.text_area("Enter text to classify:", height=100)
-        elif task_type == "Named Entity Recognition":
+        if task_type == "Named Entity Recognition":
             return st.text_area("Enter text for NER analysis:", height=100)
-        elif task_type == "Summarization":
+        if task_type == "Summarization":
             return st.text_area("Enter text to summarize:", height=200)
-        elif task_type == "Translation":
+        if task_type == "Translation":
             return st.text_area("Enter text to translate:", height=100)
 
     @staticmethod

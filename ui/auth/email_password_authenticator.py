@@ -13,17 +13,17 @@
 # limitations under the License.
 
 # email_password_authenticator.py
-import streamlit as st
-from datetime import datetime
-from typing import Optional, Dict, Any
-from ui.auth.auth_provider_interface import AuthenticationProvider
-from ui.auth.user_session import UserSession
-from ui.auth.session_manager import SessionManager
 import hashlib
 import hmac
 import secrets
 import re
 import sqlite3
+from datetime import datetime
+from typing import Optional, Dict, Any
+import streamlit as st
+from ui.auth.auth_provider_interface import AuthenticationProvider
+from ui.auth.user_session import UserSession
+from ui.auth.session_manager import SessionManager
 from config import Config
 class EmailPasswordAuthenticator(AuthenticationProvider):
     """Email/Password authentication implementation"""

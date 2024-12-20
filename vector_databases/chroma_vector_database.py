@@ -85,4 +85,3 @@ class ChromaVectorDatabase(VectorDatabase):
         if not self.vector_db:
             raise ValueError("VectorDB is not initialized. Call load_or_initialize() first.")
         return self.vector_db.as_retriever(search_kwargs={"k": k})
-

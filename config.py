@@ -13,11 +13,11 @@
 # limitations under the License.
 
 # config.py
-from dotenv import load_dotenv
 import os
-from pathlib import Path
 import json
+from pathlib import Path
 from typing import Dict, Any
+from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
@@ -46,6 +46,7 @@ class Config:
     # Validation
     @classmethod
     def validate(cls):
+        """Validate the configuration"""
         # Ensure persist directory exists
         Path(cls.CHROMA_PERSIST_DIR_PATH).mkdir(parents=True, exist_ok=True)
     

@@ -13,12 +13,15 @@
 # limitations under the License.
 
 # model_playground.py
-from ui.labs.app_mode import AppMode
-import streamlit as st
 from typing import Dict, Any
+import streamlit as st
+from ui.labs.app_mode import AppMode
 from nlp_processing.nlp_processor import NLPProcessor
 
 class ModelPlayground(AppMode):
+    """
+    Model Playground
+    """
     # Model mappings for different providers and tasks
     @staticmethod
     def render():

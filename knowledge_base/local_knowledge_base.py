@@ -13,7 +13,6 @@
 # limitations under the License.
 
 # local_knowledge_base.py
-import os
 import shutil
 from pathlib import Path
 from typing import Optional

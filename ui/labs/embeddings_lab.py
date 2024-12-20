@@ -14,13 +14,16 @@
 
 # embeddings_lab.py
 import streamlit as st
-from ui.labs.app_mode import AppMode
 from embeddings.huggingface_embedding_model import HuggingFaceEmbeddingModel
-from ui.labs.embeddings_visualizer import EmbeddingsVisualizer
 from embeddings.embedding_generator import EmbeddingGenerator
+from ui.labs.app_mode import AppMode
+from ui.labs.embeddings_visualizer import EmbeddingsVisualizer
+
 
 class EmbeddingsLab(AppMode):
-
+    """
+    Embeddings Lab class for handling embeddings configuration and processing.
+    """
     embedding_provider = None
     embedding_model_name = None
     embedding_api_key = None

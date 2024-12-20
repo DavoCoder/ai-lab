@@ -13,17 +13,17 @@
 # limitations under the License.
 
 # data_processing.py
-from ui.labs.app_mode import AppMode
-import streamlit as st
-from data_processing.document_processor import DocumentProcessor
-from typing import List, Any
 import io
 import zipfile
 import json
 from pathlib import Path
+from typing import List, Any
+import streamlit as st
+from ui.labs.app_mode import AppMode
+from data_processing.document_processor import DocumentProcessor
 
 class DataProcessing(AppMode):
-
+    """Data Processing"""
     @staticmethod
     def render():
         processor = DocumentProcessor()

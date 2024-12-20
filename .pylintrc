@@ -1,0 +1,49 @@
+[MASTER]
+# Add the project root to Python path
+init-hook='import sys; sys.path.append(".")'
+
+# Python code to execute
+ignore=CVS
+
+# Files or directories to be skipped
+ignore-patterns=
+
+# Pickle collected data for later comparisons
+persistent=yes
+
+# List of plugins
+load-plugins=
+
+# Use multiple processes to speed up Pylint (use "0" for auto)
+jobs=0
+
+[MESSAGES CONTROL]
+# Disable specific warnings
+disable=C0111,  # missing-docstring
+        C0103,  # invalid-name
+        C0303,  # trailing-whitespace
+        W0511,  # fixme
+        R0903,  # too-few-public-methods
+        R0913   # too-many-arguments
+
+[FORMAT]
+# Maximum number of characters on a single line
+max-line-length=120
+
+# Maximum number of lines in a module
+max-module-lines=2000
+
+[BASIC]
+# Regular expression which should only match function or class names
+function-rgx=[a-z_][a-z0-9_]{2,50}$
+class-rgx=[A-Z_][a-zA-Z0-9_]+$
+
+# Good variable names
+good-names=i,j,k,ex,Run,_,id,df
+
+[REPORTS]
+# Set the output format (text, parseable, colorized, html)
+output-format=colorized
+
+# Include a brief explanation of each error
+msg-template={path}:{line}: [{msg_id}({symbol}), {obj}] {msg}

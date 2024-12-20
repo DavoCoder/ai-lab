@@ -25,7 +25,8 @@ class QueryRewriterProcessor(QueryProcessor):
         self.rewriter = pipeline("text2text-generation", model=model_name)
 
     def process(self, query: str) -> str:
-        rewritten = self.rewriter(f"Rewrite this query: {query}", max_length=50, num_return_sequences=1)
+        rewritten = self.rewriter(f"Rewrite this query: {query}", 
+                                  max_length=50, num_return_sequences=1)
         rewritten_query = rewritten[0]["generated_text"]
         print(f"Original Query: {query} | Rewritten Query: {rewritten_query}")
         return rewritten_query

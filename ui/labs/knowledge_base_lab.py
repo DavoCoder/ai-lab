@@ -13,13 +13,16 @@
 # limitations under the License.
 
 # knowledge_base_lab.py
-import streamlit as st
+
 from pathlib import Path
-from typing import Optional
-from knowledge_base.local_knowledge_base import LocalKnowledgeBase
+import streamlit as st
 from config import Config
+from knowledge_base.local_knowledge_base import LocalKnowledgeBase
+
 class KnowledgeBaseLab:
-    
+    """
+    Knowledge Base Lab
+    """
     @staticmethod
     def render():
         st.title("Knowledge Base Lab")

@@ -19,6 +19,9 @@ import json
 from langchain_community.document_loaders import DirectoryLoader, TextLoader
 
 class FileChangeDetector:
+    """
+    Detect changes in files and save metadata about processed files.
+    """
     def __init__(self, data_dir, metadata_file="metadata.json"):
         """
         Initialize the FileChangeDetector.

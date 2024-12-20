@@ -13,11 +13,11 @@
 # limitations under the License.
 
 # rag_processor_api.py
-from fastapi import FastAPI, HTTPException, Depends
-from pydantic import BaseModel, Field
-from typing import List, Dict, Any, Optional
-from rag.rag_processor import RAGProcessor
 from enum import Enum
+from typing import List, Dict, Any
+from pydantic import BaseModel, Field
+from fastapi import FastAPI, HTTPException
+from rag.rag_processor import RAGProcessor
 
 app = FastAPI(
     title="RAG Processing API",

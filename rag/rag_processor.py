@@ -13,9 +13,11 @@
 # limitations under the License.
 
 # rag_processor.py
+import logging
+from typing import Dict, Any
+from langchain.chains import RetrievalQA
 from langchain_openai import ChatOpenAI
 from langchain_anthropic import ChatAnthropic
-from langchain.chains import RetrievalQA
 from embeddings.openai_embedding_model import OpenAIEmbeddingModel
 from embeddings.huggingface_embedding_model import HuggingFaceEmbeddingModel
 from vector_databases.chroma_vector_database import ChromaVectorDatabase
@@ -26,12 +28,8 @@ from query_pre_processing.spellcheck_query_processor import SpellCheckQueryProce
 from query_pre_processing.query_rewriter_processor import QueryRewriterProcessor
 from response_post_processing.hallucination_filter import HallucinationFilter
 from response_post_processing.summarization_post_processor import SummarizationPostProcessor
-from langchain.chains import RetrievalQA
-from langchain_openai import ChatOpenAI
-from langchain_anthropic import ChatAnthropic
-from typing import Dict, Any
 from config import Config
-import logging
+
 
 class RAGProcessor:
     """
@@ -114,7 +112,7 @@ class RAGProcessor:
                 max_tokens=self.llm_settings.get("max_tokens", 500)
             )
         else:
-            raise ValueError(f"Unsupported model: {self.model_name}")
+            raise ValueError(f"Unsupported model: {self.llm_option}")
 
     def initialize_embeddings(self) -> None:
         logging.info(f"Initializing embeddings with option: {self.embedding_option}")

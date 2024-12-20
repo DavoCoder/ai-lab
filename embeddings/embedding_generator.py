@@ -14,7 +14,7 @@
 
 # embedding_generator.py
 import logging
-from typing import List, Optional, Dict, Any
+from typing import List, Dict, Any
 from langchain.schema import Document
 from data_processing.document_processor import DocumentProcessor
 from web_research.web_researcher import WebResearcher
@@ -29,7 +29,9 @@ from config import Config
 logger = logging.getLogger(__name__)
 
 class EmbeddingGenerator:
-
+    """
+    EmbeddingGenerator class for processing and storing documents in a vector database.
+    """
     def __init__(self, embedding_option: str,
         embedding_model_name: str,
         embedding_api_key: str,
@@ -41,7 +43,7 @@ class EmbeddingGenerator:
         web_research_provider_api_key: str):
 
         logger.info("Initializing EmbeddingGenerator with model: %s", embedding_model_name)
-        
+
         self.embedding_option = embedding_option
         self.embedding_model_name = embedding_model_name
         self.embedding_api_key = embedding_api_key
@@ -66,7 +68,7 @@ class EmbeddingGenerator:
     def _initialize_embedding_model(self):
         """Initialize the embedding model."""
         logger.debug("Initializing embedding model: %s", self.embedding_option)
-        
+    
         try:
             if self.embedding_option == "HuggingFace":
                 self.embedding_model = HuggingFaceEmbeddingModel(model_name=self.embedding_model_name).load_model()
@@ -78,11 +80,11 @@ class EmbeddingGenerator:
         except Exception as e:
             logger.error("Error initializing embedding model: %s", str(e), exc_info=True)
             raise
-        
+
     def _initialize_vector_db(self):
         """Initialize vector database with appropriate configuration."""
         logger.debug("Initializing vector database: %s", self.vector_db_option)
-        
+
         try:
             if self.vector_db_option == "Local (ChromaDB)":
                 self.vector_db = ChromaVectorDatabase(
@@ -93,7 +95,7 @@ class EmbeddingGenerator:
                 if not self.vector_db_api_key or not self.vector_db_index:
                     logger.error("Missing Pinecone credentials")
                     raise ValueError("Pinecone API key and index name are required")
-                
+
                 self.vector_db = PineconeVectorDatabase(
                     api_key=self.vector_db_api_key,
                     index_name=self.vector_db_index,
@@ -109,7 +111,7 @@ class EmbeddingGenerator:
     def process_local_knowledge_base(self) -> Dict[str, Any]:
         """Process documents from local knowledge base."""
         logger.info("Processing local knowledge base")
-        
+
         if not self.embedding_model:
             logger.error("Embedding model not configured")
             raise ValueError("Embedding model not configured")

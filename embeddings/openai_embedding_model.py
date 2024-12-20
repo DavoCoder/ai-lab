@@ -18,6 +18,9 @@ from langchain_openai import OpenAIEmbeddings
 from embeddings.embedding_model_interface import EmbeddingModel
 
 class OpenAIEmbeddingModel(EmbeddingModel):
+    """
+    OpenAI Embedding Model Wrapper.
+    """
     def __init__(self, api_key):
         """
         OpenAI Embedding Model Wrapper.

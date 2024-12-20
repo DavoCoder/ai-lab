@@ -17,7 +17,9 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from embeddings.embedding_model_interface import EmbeddingModel
 
 class HuggingFaceEmbeddingModel(EmbeddingModel):
-    
+    """
+    HuggingFace Embedding Model Wrapper.
+    """
     HUGGINGFACE_MODELS = {
         "all-mpnet-base-v2": 768,
         "all-MiniLM-L6-v2": 384,

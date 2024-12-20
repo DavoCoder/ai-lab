@@ -13,11 +13,12 @@
 # limitations under the License.
 
 # home.py
-from ui.labs.app_mode import AppMode
-import streamlit as st
 from pathlib import Path
+import streamlit as st
+from ui.labs.app_mode import AppMode
 
 class Home(AppMode):
+    """Home page"""
     @staticmethod
     def render():
         # Get the path to the markdown file

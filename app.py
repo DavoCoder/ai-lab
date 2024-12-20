@@ -13,27 +13,27 @@
 # limitations under the License.
 
 # app.py
-import streamlit as st
 import logging
+import streamlit as st
 from config import Config
 from ui.auth.authenticator_manager import AuthenticationManager
 from ui.auth.email_password_authenticator import EmailPasswordAuthenticator
-from ui.auth.google_authenticator import GoogleAuthenticator
 from ui.labs.mode_config import MODE_INFO, MODE_CLASSES
 
 def setup_authentication():
+    """Setup authentication"""
     auth_manager = AuthenticationManager()
-    
+
     # Register providers
     email_auth = EmailPasswordAuthenticator(Config.AUTH_DB_PATH)
-    google_auth = GoogleAuthenticator(
-        client_id=Config.GOOGLE_CLIENT_ID,
-        client_secret=Config.GOOGLE_CLIENT_SECRET
-    )
-    
-    auth_manager.register_provider("email", email_auth) 
+    #google_auth = GoogleAuthenticator(
+    #    client_id=Config.GOOGLE_CLIENT_ID,
+    #    client_secret=Config.GOOGLE_CLIENT_SECRET
+    #)
+
+    auth_manager.register_provider("email", email_auth)
     #auth_manager.register_provider("Google", google_auth)
-    
+
     return auth_manager
 
 
@@ -58,7 +58,7 @@ st.set_page_config(
 )
 if 'auth_manager' not in st.session_state:
     st.session_state.auth_manager = setup_authentication()
-    
+
 auth_manager = st.session_state.auth_manager
 
 # Check authentication and show appropriate content
@@ -67,7 +67,7 @@ if not auth_manager.is_authenticated():
 else:
     # Show the main application
     st.sidebar.title("AI Lab")
-    
+
     # Show logged-in user info and logout button
     session = auth_manager.session_manager.get_session()
     st.sidebar.markdown(f"👤 Logged in as: **{session.username}**")
@@ -76,7 +76,7 @@ else:
     # Validate and set environment variables at startup
     Config.validate()
     #Config.set_environment()
-    
+
     # Main Mode Selection
     app_mode = st.sidebar.selectbox(
         "Select Mode",

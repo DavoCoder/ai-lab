@@ -13,14 +13,16 @@
 # limitations under the License.
 
 # rag_pipeline.py
-from ui.labs.app_mode import AppMode
-import streamlit as st
-from config import Config
 from typing import Dict, Any
+import streamlit as st
+from ui.labs.app_mode import AppMode
 from rag.rag_processor import RAGProcessor
+from config import Config
 
 class RAGPipeline(AppMode):
-
+    """
+    RAG Pipeline
+    """
     llm_option = None
     llm_api_key = None
     embedding_option = None
@@ -47,8 +49,9 @@ class RAGPipeline(AppMode):
         st.sidebar.header("Configuration Options")
 
         # Select LLM and get appropriate API key
-        RAGPipeline.llm_option = st.sidebar.selectbox("Select LLM", ["OpenAI GPT-4", "OpenAI GPT-3.5", 
-                                                                     "Anthropic Claude-3 Opus", "Anthropic Claude-3 Sonnet"])
+        RAGPipeline.llm_option = st.sidebar.selectbox(
+            "Select LLM", ["OpenAI GPT-4", "OpenAI GPT-3.5", 
+            "Anthropic Claude-3 Opus", "Anthropic Claude-3 Sonnet"])
  
         if "OpenAI" in RAGPipeline.llm_option or "Anthropic" in RAGPipeline.llm_option:
             RAGPipeline.llm_api_key = st.sidebar.text_input(f"{RAGPipeline.llm_option} API Key", type="password")

@@ -13,14 +13,17 @@
 # limitations under the License.
 
 # web_research.py
-from ui.labs.app_mode import AppMode
 from typing import Tuple
 import streamlit as st
+from ui.labs.app_mode import AppMode
 from web_research.web_researcher import WebResearcher
 from nlp_processing.nlp_processor import NLPProcessor
 
 
 class WebResearch(AppMode):
+    """
+    Web Research
+    """
     @staticmethod
     def render():
         st.sidebar.header("Research Configuration")
@@ -214,4 +217,4 @@ class WebResearch(AppMode):
             if len(synthesis_api_key.strip()) < 20:  # Basic key length validation
                 return False, f"Invalid {synthesis_provider} synthesis API key"
                 
-        return True, "" 
+        return True, ""

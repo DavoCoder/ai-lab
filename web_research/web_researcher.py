@@ -26,7 +26,6 @@ logger = logging.getLogger(__name__)
 class WebResearcher:
     def __init__(self):
         logger.debug("Initializing WebResearcher")
-        pass
 
     def search(self, query: str, urls: List[str], model_provider: str, model_id: str, 
                depth: int = 2, include_citations: bool = True, api_key: str = None) -> Dict[str, Any]:
@@ -225,7 +224,8 @@ class WebResearcher:
                 response = client.messages.create(
                     model=model_id,
                     messages=[{"role": "user", "content": prompt}],
-                    temperature=0.3
+                    temperature=0.3, #TODO: Make this a parameter
+                    max_tokens=500 #TODO: Make this a parameter
                 )
                 result = response.content[0].text
                 
@@ -297,7 +297,8 @@ class WebResearcher:
                 response = client.messages.create(
                     model=model_id,
                     messages=[{"role": "user", "content": prompt}],
-                    temperature=0.3
+                    temperature=0.3, #TODO: Make this a parameter
+                    max_tokens=500 #TODO: Make this a parameter
                 )
                 synthesis = response.content[0].text
                 

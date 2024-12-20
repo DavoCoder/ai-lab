@@ -13,13 +13,16 @@
 # limitations under the License.
 
 # nlp_processor.py
+import json
 from typing import Dict, Any
 from openai import OpenAI
 from anthropic import Anthropic
-import json
 from config import Config
 
 class NLPProcessor:
+    """
+    NLPProcessor class for processing NLP tasks using OpenAI and Anthropic models.
+    """
      # Load all configurations at module import time
     try:
         configs = Config.load_all_configs()
@@ -146,4 +149,3 @@ class NLPProcessor:
 
         except Exception as e:
             raise Exception(f"Anthropic API error: {str(e)}")
-

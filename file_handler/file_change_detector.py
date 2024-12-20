@@ -37,7 +37,7 @@ class FileChangeDetector:
     def _load_metadata(self):
         """Load existing metadata or create an empty dictionary."""
         if os.path.exists(self.metadata_file):
-            with open(self.metadata_file, "r") as f:
+            with open(self.metadata_file, "r", encoding='utf-8') as f:
                 return json.load(f)
         return {}
 
@@ -92,7 +92,7 @@ class FileChangeDetector:
 
     def save_metadata(self):
         """Save the updated metadata to the metadata file."""
-        with open(self.metadata_file, "w") as f:
+        with open(self.metadata_file, "w", encoding='utf-8') as f:
             json.dump(self.processed_files, f, indent=4)
         print("Metadata saved successfully.")
 

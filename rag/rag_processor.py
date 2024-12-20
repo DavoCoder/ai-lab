@@ -73,26 +73,27 @@ class RAGProcessor:
         self.retriever = None
         self.qa_chain = None
 
-        logging.info(f"Initializing RAGProcessor with LLM: {llm_option}, Embedding: {embedding_option}, Vector DB: {vector_db_option}")
+        logging.info("Initializing RAGProcessor with LLM: %s, Embedding: %s, Vector DB: %s", 
+                     llm_option, embedding_option, vector_db_option)
 
     def initialize_and_execute_all(self, user_query: str) -> str:
-        logging.info(f"Processing query: {user_query}")
+        logging.info("Processing query: %s", user_query)
         self.initialize_embeddings()
         self.initialize_vector_db()
         self.initialize_toxicity_detector()
        
         processed_user_query = self.apply_pre_processing(user_query)
-        logging.info(f"Processed query: {processed_user_query}")
+        logging.info("Processed query: %s", processed_user_query)
           
         if self.apply_toxicity_detection(processed_user_query):
-            logging.warning(f"Toxic content detected in processed query: {processed_user_query}")
+            logging.warning("Toxic content detected in processed query: %s", processed_user_query)
             return "Query contains toxic content. Aborting."
           
         response = self.execute_qa_chain(processed_user_query)
-        logging.info(f"Raw response from QA chain: {response}")
+        logging.info("Raw response from QA chain: %s", response)
         
         response = self.apply_post_processing(response, processed_user_query)
-        logging.info(f"Final processed response: {response}")
+        logging.info("Final processed response: %s", response)
 
         return response
     
@@ -117,7 +118,7 @@ class RAGProcessor:
     def initialize_embeddings(self) -> None:
         """Initialize the embedding model."""
         
-        logging.info(f"Initializing embeddings with option: {self.embedding_option}")
+        logging.info("Initializing embeddings with option: %s", self.embedding_option)
         
         if self.embedding_option == "OpenAI":
             self.embedding_model = OpenAIEmbeddingModel(api_key=self.embedding_api_key).load_model()
@@ -127,7 +128,7 @@ class RAGProcessor:
     def initialize_vector_db(self) -> None:
         """Create a new vector store or load existing one."""
         
-        logging.info(f"Initializing vector database: {self.vector_db_option}")
+        logging.info("Initializing vector database: %s", self.vector_db_option)
         
         if self.embedding_model is None:
             self.initialize_embeddings()
@@ -143,7 +144,7 @@ class RAGProcessor:
             raise ValueError("Unsupported vector database option")
         
     def initialize_toxicity_detector(self):
-        logging.info(f"Initializing toxicity detector: {self.toxicity_option}")
+        logging.info("Initializing toxicity detector: %s", self.toxicity_option)
         if self.toxicity_option == "OpenAI":
             self.toxicity_detector = OpenAIToxicityDetector(api_key=self.toxicity_api_key)
         elif self.toxicity_option == "HuggingFace":
@@ -155,7 +156,7 @@ class RAGProcessor:
         return False
 
     def apply_pre_processing(self, user_query: str) -> str:
-        logging.info(f"Applying pre-processing steps: {self.pre_process_options}")
+        logging.info("Applying pre-processing steps: %s", self.pre_process_options)
         for option in self.pre_process_options:
             if option == "Spell Check":
                 query_processor = SpellCheckQueryProcessor()
@@ -175,7 +176,7 @@ class RAGProcessor:
         return self.qa_chain.invoke(user_query)["result"]
 
     def apply_post_processing(self, response: str, user_query: str) -> str:
-        logging.info(f"Applying post-processing steps: {self.post_process_options}")
+        logging.info("Applying post-processing steps: %s", self.post_process_options)
         for option in self.post_process_options:
             if option == "Hallucination Filter":
                 post_processor = HallucinationFilter()

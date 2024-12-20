@@ -63,7 +63,7 @@ class EmbeddingGenerator:
             logger.debug("Successfully initialized embedding model and vector database")
         except Exception as e:
             logger.error("Initialization failed: %s", str(e), exc_info=True)
-            raise
+            raise EmbeddingGeneratorException(f"Initialization failed: {str(e)}") from e
 
     def _initialize_embedding_model(self):
         """Initialize the embedding model."""
@@ -79,7 +79,7 @@ class EmbeddingGenerator:
                 raise ValueError(f"Unsupported embedding model: {self.embedding_option}")
         except Exception as e:
             logger.error("Error initializing embedding model: %s", str(e), exc_info=True)
-            raise
+            raise EmbeddingGeneratorException(f"Error initializing embedding model: {str(e)}") from e
 
     def _initialize_vector_db(self):
         """Initialize vector database with appropriate configuration."""
@@ -106,7 +106,7 @@ class EmbeddingGenerator:
                 raise ValueError(f"Unsupported vector database type: {self.vector_db_option}")
         except Exception as e:
             logger.error("Error initializing vector database: %s", str(e), exc_info=True)
-            raise
+            raise EmbeddingGeneratorException(f"Error initializing vector database: {str(e)}") from e
 
     def process_local_knowledge_base(self) -> Dict[str, Any]:
         """Process documents from local knowledge base."""
@@ -240,3 +240,10 @@ class EmbeddingGenerator:
         except Exception as e:
             logger.error("Error processing local documents: %s", str(e), exc_info=True)
             return {"status": "error", "message": str(e)}
+
+class EmbeddingGeneratorException(Exception):
+    """Base exception for embedding generator related errors"""
+    def __init__(self, message="Embedding generator error occurred"):
+        self.message = message
+        super().__init__(self.message)
+

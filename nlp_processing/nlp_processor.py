@@ -31,7 +31,7 @@ class NLPProcessor:
         TASK_SETTINGS = configs["task_settings"]
         SYSTEM_PROMPTS = configs["system_prompts"]
     except Exception as e:
-        raise Exception(f"Error initializing NLPProcessor configurations: {str(e)}")
+        raise Exception(f"Error initializing NLPProcessor configurations: {str(e)}") from e
 
     @staticmethod
     def process_task(task_type: str, model_provider: str, model: str, 

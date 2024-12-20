@@ -48,7 +48,7 @@ class DocumentProcessor:
                 content = content.lower()
             return content
         except Exception as e:
-            raise Exception(f"Error cleaning text: {str(e)}") from e
+            raise DocumentProcessorException(f"Error cleaning text: {str(e)}") from e
 
     def split_document(self, content: str, split_config: Dict[str, Any]) -> List[str]:
         """Split document based on configuration."""
@@ -71,24 +71,33 @@ class DocumentProcessor:
                 
             return chunks
         except Exception as e:
-            raise Exception(f"Error splitting document: {str(e)}") from e
+            raise DocumentProcessorException(f"Error splitting document: {str(e)}") from e
 
     def convert_format(self, content: str, target_format: str) -> Tuple[str, str]:
         """Convert content to target format."""
         try:
+            converted_content = None
+            extension = None
+            
             if target_format == "TXT":
-                return content, ".txt"
+                converted_content = content
+                extension = ".txt"
             elif target_format == "JSON":
-                return json.dumps({"content": content}), ".json"
+                converted_content = json.dumps({"content": content})
+                extension = ".json"
             elif target_format == "CSV":
                 df = pd.DataFrame({"content": [content]})
-                return df.to_csv(index=False), ".csv"
+                converted_content = df.to_csv(index=False)
+                extension = ".csv"
             elif target_format == "HTML":
-                return f"<html><body><pre>{content}</pre></body></html>", ".html"
-            else:
-                raise ValueError(f"Unsupported target format: {target_format}")
+                converted_content = f"<html><body><pre>{content}</pre></body></html>"
+                extension = ".html"
+                
+            if converted_content is not None and extension is not None:
+                return converted_content, extension
+            raise ValueError(f"Unsupported target format: {target_format}")
         except Exception as e:
-            raise Exception(f"Error converting format: {str(e)}") from e
+            raise DocumentProcessorException(f"Error converting format: {str(e)}") from e
 
     def extract_metadata(self, file: Any) -> Dict[str, Any]:
         """Extract metadata from file."""
@@ -114,31 +123,34 @@ class DocumentProcessor:
                 
             return metadata
         except Exception as e:
-            raise Exception(f"Error extracting metadata: {str(e)}") from e
+            raise DocumentProcessorException(f"Error extracting metadata: {str(e)}") from e
 
     def read_file_content(self, file: Any) -> str:
         """Read content from file."""
         try:
             file_ext = Path(file.name).suffix.lower()
+            content = ""
             
             if file_ext == ".txt":
-                return file.getvalue().decode()
+                content = file.getvalue().decode()
             elif file_ext == ".pdf":
                 pdf_reader = PyPDF2.PdfReader(file)
-                return " ".join(page.extract_text() for page in pdf_reader.pages)
+                content = " ".join(page.extract_text() for page in pdf_reader.pages)
             elif file_ext == ".docx":
                 doc = docx.Document(file)
-                return " ".join(paragraph.text for paragraph in doc.paragraphs)
+                content = " ".join(paragraph.text for paragraph in doc.paragraphs)
             elif file_ext == ".html":
                 soup = BeautifulSoup(file.getvalue().decode(), 'html.parser')
-                return soup.get_text()
+                content = soup.get_text()
             elif file_ext == ".json":
                 data = json.loads(file.getvalue().decode())
-                return json.dumps(data, indent=2)
+                content = json.dumps(data, indent=2)
             else:
                 raise ValueError(f"Unsupported file type: {file_ext}")
+                
+            return content
         except Exception as e:
-            raise Exception(f"Error reading file: {str(e)}") from e
+            raise DocumentProcessorException(f"Error reading file: {str(e)}") from e
 
     def batch_process(self, file: Any, operations: List[str]) -> Dict[str, Any]:
         """Process file with multiple operations."""
@@ -166,4 +178,10 @@ class DocumentProcessor:
                 
             return result
         except Exception as e:
-            raise Exception(f"Error in batch processing: {str(e)}") from e
+            raise DocumentProcessorException(f"Error in batch processing: {str(e)}") from e
+        
+class DocumentProcessorException(Exception):
+    """Base exception for document processor related errors"""
+    def __init__(self, message="Document processor error occurred"):
+        self.message = message
+        super().__init__(self.message)

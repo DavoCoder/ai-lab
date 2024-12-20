@@ -34,5 +34,7 @@ class Home(AppMode):
             
         except FileNotFoundError:
             st.error("Documentation file not found. Please check if docs/home.md exists.")
-        except Exception as e:
-            st.error(f"Error loading documentation: {str(e)}")
+        except IOError as e:
+            st.error(f"Error reading documentation file: {str(e)}")
+        except UnicodeDecodeError as e:
+            st.error(f"Error decoding documentation file: {str(e)}")

@@ -59,8 +59,7 @@ class ChromaVectorDatabase(VectorDatabase):
 
         # Check for empty text chunks
         if not texts:
-            print("No valid text chunks found to add to the VectorDB. Skipping upsert.")
-            exit()
+            raise ValueError("No valid text chunks found to add to the VectorDB.")
 
         print(f"Number of text chunks created: {len(texts)}")
 

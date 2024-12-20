@@ -115,8 +115,10 @@ class RAGProcessor:
             raise ValueError(f"Unsupported model: {self.llm_option}")
 
     def initialize_embeddings(self) -> None:
-        logging.info(f"Initializing embeddings with option: {self.embedding_option}")
         """Initialize the embedding model."""
+        
+        logging.info(f"Initializing embeddings with option: {self.embedding_option}")
+        
         if self.embedding_option == "OpenAI":
             self.embedding_model = OpenAIEmbeddingModel(api_key=self.embedding_api_key).load_model()
         elif self.embedding_option == "HuggingFace":

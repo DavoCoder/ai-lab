@@ -40,7 +40,7 @@ class RAGPipeline(AppMode):
         configs = Config.load_all_configs()
         TASK_SETTINGS = configs["task_settings"]
     except Exception as e:
-        raise Exception(f"Error initializing advanced configurations: {str(e)}")
+        raise Exception(f"Error initializing advanced configurations: {str(e)}") from e
     
     @staticmethod
     def render():

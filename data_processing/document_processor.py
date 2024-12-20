@@ -13,14 +13,14 @@
 # limitations under the License.
 
 # document_processor.py
+import json
+import re
+from pathlib import Path
 from typing import List, Dict, Any, Tuple
 import pandas as pd
 import docx
-import json
-from bs4 import BeautifulSoup
 import PyPDF2
-import re
-from pathlib import Path
+from bs4 import BeautifulSoup
 
 class DocumentProcessor:
     SUPPORTED_EXTENSIONS = {
@@ -48,7 +48,7 @@ class DocumentProcessor:
                 content = content.lower()
             return content
         except Exception as e:
-            raise Exception(f"Error cleaning text: {str(e)}")
+            raise Exception(f"Error cleaning text: {str(e)}") from e
 
     def split_document(self, content: str, split_config: Dict[str, Any]) -> List[str]:
         """Split document based on configuration."""
@@ -71,7 +71,7 @@ class DocumentProcessor:
                 
             return chunks
         except Exception as e:
-            raise Exception(f"Error splitting document: {str(e)}")
+            raise Exception(f"Error splitting document: {str(e)}") from e
 
     def convert_format(self, content: str, target_format: str) -> Tuple[str, str]:
         """Convert content to target format."""
@@ -88,7 +88,7 @@ class DocumentProcessor:
             else:
                 raise ValueError(f"Unsupported target format: {target_format}")
         except Exception as e:
-            raise Exception(f"Error converting format: {str(e)}")
+            raise Exception(f"Error converting format: {str(e)}") from e
 
     def extract_metadata(self, file: Any) -> Dict[str, Any]:
         """Extract metadata from file."""
@@ -114,7 +114,7 @@ class DocumentProcessor:
                 
             return metadata
         except Exception as e:
-            raise Exception(f"Error extracting metadata: {str(e)}")
+            raise Exception(f"Error extracting metadata: {str(e)}") from e
 
     def read_file_content(self, file: Any) -> str:
         """Read content from file."""
@@ -138,7 +138,7 @@ class DocumentProcessor:
             else:
                 raise ValueError(f"Unsupported file type: {file_ext}")
         except Exception as e:
-            raise Exception(f"Error reading file: {str(e)}")
+            raise Exception(f"Error reading file: {str(e)}") from e
 
     def batch_process(self, file: Any, operations: List[str]) -> Dict[str, Any]:
         """Process file with multiple operations."""
@@ -166,4 +166,4 @@ class DocumentProcessor:
                 
             return result
         except Exception as e:
-            raise Exception(f"Error in batch processing: {str(e)}")
+            raise Exception(f"Error in batch processing: {str(e)}") from e

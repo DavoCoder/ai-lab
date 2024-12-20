@@ -23,4 +23,3 @@ class EmbeddingModel(ABC):
         Returns:
             An initialized embedding model.
         """
-        pass

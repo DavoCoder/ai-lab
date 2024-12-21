@@ -45,6 +45,7 @@ class KnowledgeBaseLab:
         with tab_delete:
             KnowledgeBaseLab._handle_delete_documents(kb)
 
+    @staticmethod
     def _handle_upload_documents(kb: LocalKnowledgeBase):
         st.header("Upload Documents")
         # File uploader
@@ -76,6 +77,7 @@ class KnowledgeBaseLab:
                 except Exception as e:
                     st.error(f"Error uploading {uploaded_file.name}: {str(e)}")
 
+    @staticmethod
     def _handle_list_documents(kb: LocalKnowledgeBase):
         st.header("Document List")
         # List all files recursively
@@ -97,6 +99,7 @@ class KnowledgeBaseLab:
         
         st.dataframe(files_data)
 
+    @staticmethod
     def _handle_delete_documents(kb: LocalKnowledgeBase):
         st.header("Delete Documents")
         
@@ -133,6 +136,7 @@ class KnowledgeBaseLab:
             # Rerun the app to refresh the file list
             st.rerun()
 
+    @staticmethod
     def _list_files_recursive(directory: Path) -> list[Path]:
         """Recursively list all files in the directory."""
         files = []

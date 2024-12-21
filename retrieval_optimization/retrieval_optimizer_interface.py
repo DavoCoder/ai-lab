@@ -32,4 +32,3 @@ class RetrievalOptimizer(ABC):
         Returns:
             list: A list of optimized/re-ranked documents.
         """
-

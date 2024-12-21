@@ -37,4 +37,3 @@ class ExternalKnowledgeBase(ABC):
         Returns:
             List of new or updated documents.
         """
-

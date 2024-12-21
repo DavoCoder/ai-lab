@@ -13,34 +13,34 @@
 # limitations under the License.
 
 # rag_pipeline.py
-from typing import Dict, Any
+from typing import Dict, Any, List
 import streamlit as st
 from ui.labs.app_mode import AppMode
 from rag.rag_processor import RAGProcessor
-from config import Config
+from config import Config, ConfigException
 
 class RAGPipeline(AppMode):
     """
     RAG Pipeline
     """
-    llm_option = None
-    llm_api_key = None
-    embedding_option = None
-    embedding_api_key = None
-    vector_db_option = None
-    vector_db_api_key = None
-    vector_db_index = None
-    toxicity_option = None
-    toxicity_api_key = None
-    preprocess_options = None
-    postprocess_options = None
-    settings = None
+    llm_option: str = None
+    llm_api_key: str = None
+    embedding_option: str = None
+    embedding_api_key: str = None
+    vector_db_option: str = None
+    vector_db_api_key: str = None
+    vector_db_index: str = None
+    toxicity_option: str = None
+    toxicity_api_key: str = None
+    preprocess_options: List[str] = None
+    postprocess_options: List[str] = None
+    settings: Dict[str, Any] = None
 
     try:
         configs = Config.load_all_configs()
         TASK_SETTINGS = configs["task_settings"]
-    except Exception as e:
-        raise Exception(f"Error initializing advanced configurations: {str(e)}") from e
+    except ConfigException as e:
+        raise ConfigException(f"Error initializing advanced configurations: {str(e)}") from e
     
     @staticmethod
     def render():
@@ -142,7 +142,7 @@ class RAGPipeline(AppMode):
             st.subheader("Response:")
             st.write(response)
 
-        
+    @staticmethod
     def _render_advanced_settings() -> Dict[str, Any]:
         settings = {}
         # Add default settings

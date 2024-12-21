@@ -17,7 +17,7 @@ import json
 from typing import Dict, Any
 from openai import OpenAI
 from anthropic import Anthropic
-from config import Config
+from config import Config, ConfigException
 
 class NLPProcessor:
     """
@@ -30,21 +30,22 @@ class NLPProcessor:
         TASK_DESCRIPTIONS = configs["task_descriptions"]
         TASK_SETTINGS = configs["task_settings"]
         SYSTEM_PROMPTS = configs["system_prompts"]
-    except Exception as e:
-        raise Exception(f"Error initializing NLPProcessor configurations: {str(e)}") from e
+    except ConfigException as e:
+        print(f"Failed to load NLP configurations: {str(e)}")  # Log the error
+        raise ConfigException(f"Error initializing NLPProcessor configurations: {str(e)}") from e
 
     @staticmethod
     def process_task(task_type: str, model_provider: str, model: str, 
                         input_text: str, settings: Dict[str, Any], api_key: str = None):
         if not input_text:
-            raise ValueError("Please provide input text")
+            raise NLPProcessorException("Please provide input text")
 
         if model_provider == "OpenAI":
             return NLPProcessor._process_openai(task_type, model, input_text, settings, api_key)
-        elif model_provider == "Anthropic":
+        if model_provider == "Anthropic":
             return NLPProcessor._process_anthropic(task_type, model, input_text, settings, api_key)
-        else:
-            raise NotImplementedError(f"Provider {model_provider} not implemented yet")
+        
+        raise NLPProcessorException(f"Provider {model_provider} not implemented yet")
 
     @staticmethod
     def _parse_model_response(task_type: str, result: str) -> Any:
@@ -125,7 +126,7 @@ class NLPProcessor:
             return NLPProcessor._parse_model_response(task_type, result)
 
         except Exception as e:
-            raise Exception(f"OpenAI API error: {str(e)}") from e
+            raise NLPProcessorException(f"OpenAI API error: {str(e)}") from e
 
     @staticmethod
     def _process_anthropic(task_type: str, model: str, input_text: str, 
@@ -148,4 +149,10 @@ class NLPProcessor:
             return NLPProcessor._parse_model_response(task_type, result)
 
         except Exception as e:
-            raise Exception(f"Anthropic API error: {str(e)}") from e
+            raise NLPProcessorException(f"Anthropic API error: {str(e)}") from e
+
+class NLPProcessorException(Exception):
+    """Base exception for NLP processor related errors"""
+    def __init__(self, message="NLP processor error occurred"):
+        self.message = message
+        super().__init__(self.message)

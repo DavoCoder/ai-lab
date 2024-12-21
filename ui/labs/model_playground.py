@@ -16,7 +16,7 @@
 from typing import Dict, Any
 import streamlit as st
 from ui.labs.app_mode import AppMode
-from nlp_processing.nlp_processor import NLPProcessor
+from nlp_processing.nlp_processor import NLPProcessor, NLPProcessorException
 
 class ModelPlayground(AppMode):
     """
@@ -78,7 +78,7 @@ class ModelPlayground(AppMode):
                         api_key=api_key
                     )
                     ModelPlayground._display_results(task_type, result)
-                except Exception as e:
+                except NLPProcessorException as e:
                     st.error(f"Error processing task: {str(e)}")
 
     @staticmethod

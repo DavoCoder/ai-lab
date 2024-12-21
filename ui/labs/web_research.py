@@ -16,7 +16,7 @@
 from typing import Tuple
 import streamlit as st
 from ui.labs.app_mode import AppMode
-from web_research.web_researcher import WebResearcher
+from web_research.web_researcher import WebResearcher, WebResearcherException
 from nlp_processing.nlp_processor import NLPProcessor
 
 
@@ -107,11 +107,11 @@ class WebResearch(AppMode):
             
             if not urls:
                 st.warning("Please enter at least one URL.")
-                return []
+                return
                 
         else:
             st.warning("Other search types not yet implemented")
-            return []
+            return
         
         if st.button("Start Research"):
             # Validate all settings before proceeding
@@ -136,8 +136,10 @@ class WebResearch(AppMode):
             try:
                 with st.spinner("Researching..."):
                     # Initialize models with their full IDs
-                    research_model_id = NLPProcessor.PROVIDER_MODELS[research_provider]["Text Generation"]["model_ids"][research_model]
-                    synthesis_model_id = NLPProcessor.PROVIDER_MODELS[synthesis_provider]["Summarization"]["model_ids"][synthesis_model]
+                    research_model_id = NLPProcessor.PROVIDER_MODELS[research_provider]\
+                        ["Text Generation"]["model_ids"][research_model]
+                    synthesis_model_id = NLPProcessor.PROVIDER_MODELS[synthesis_provider]\
+                        ["Summarization"]["model_ids"][synthesis_model]
                     
                     # Perform research
                     sources = WebResearcher.perform_research(
@@ -171,7 +173,7 @@ class WebResearch(AppMode):
                         for idx, source in enumerate(sources, 1):
                             st.markdown(f"{idx}. [{source['title']}]({source['url']})")
                             
-            except Exception as e:
+            except WebResearcherException as e:
                 st.error(f"An error occurred during research: {str(e)}")
 
     @staticmethod

@@ -105,15 +105,15 @@ class RAGProcessor:
                 temperature=self.llm_settings.get("temperature", 0.7),
                 max_tokens=self.llm_settings.get("max_tokens", 500)
             )
-        elif "OpenAI GPT" in self.llm_option:
+        if "OpenAI GPT" in self.llm_option:
             return ChatOpenAI(
                 api_key=self.llm_api_key,
                 model="gpt-4" if "GPT-4" in self.llm_option else "gpt-3.5-turbo",
                 temperature=self.llm_settings.get("temperature", 0.7),
                 max_tokens=self.llm_settings.get("max_tokens", 500)
             )
-        else:
-            raise ValueError(f"Unsupported model: {self.llm_option}")
+       
+        raise RAGProcessorException(f"Unsupported model: {self.llm_option}")
 
     def initialize_embeddings(self) -> None:
         """Initialize the embedding model."""
@@ -141,7 +141,7 @@ class RAGProcessor:
                                                     embedding_model=self.embedding_model,
                                                     api_key=self.vector_db_api_key)
         else:
-            raise ValueError("Unsupported vector database option")
+            raise RAGProcessorException(f"Unsupported vector database option: {self.vector_db_option}")
         
     def initialize_toxicity_detector(self):
         logging.info("Initializing toxicity detector: %s", self.toxicity_option)
@@ -185,3 +185,9 @@ class RAGProcessor:
                 post_processor = SummarizationPostProcessor()
                 response = post_processor.process(response, None)
         return response
+
+class RAGProcessorException(Exception):
+    """Base exception for RAG processor related errors"""
+    def __init__(self, message="RAG processor error occurred"):
+        self.message = message
+        super().__init__(self.message)

@@ -37,3 +37,4 @@ class SessionManager:
     @staticmethod
     def get_session() -> Optional[UserSession]:
         return st.session_state.user_session
+    

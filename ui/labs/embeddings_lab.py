@@ -15,7 +15,7 @@
 # embeddings_lab.py
 import streamlit as st
 from embeddings.huggingface_embedding_model import HuggingFaceEmbeddingModel
-from embeddings.embedding_generator import EmbeddingGenerator
+from embeddings.embedding_generator import EmbeddingGenerator, EmbeddingGeneratorException
 from ui.labs.app_mode import AppMode
 from ui.labs.embeddings_visualizer import EmbeddingsVisualizer
 
@@ -75,7 +75,8 @@ class EmbeddingsLab(AppMode):
                 list(HuggingFaceEmbeddingModel.HUGGINGFACE_MODELS.keys()),
                 format_func=lambda x: f"{x} ({HuggingFaceEmbeddingModel.HUGGINGFACE_MODELS[x]} dimensions)"
             )
-            st.sidebar.info(f"Model dimensions: {HuggingFaceEmbeddingModel.HUGGINGFACE_MODELS[EmbeddingsLab.embedding_model_name]}")
+            model_dims = HuggingFaceEmbeddingModel.HUGGINGFACE_MODELS[EmbeddingsLab.embedding_model_name]
+            st.sidebar.info(f"Model dimensions: {model_dims}")
         else: 
             EmbeddingsLab.embedding_api_key = st.sidebar.text_input("OpenAI API Key", type="password")
             if EmbeddingsLab.embedding_api_key:
@@ -128,7 +129,7 @@ class EmbeddingsLab(AppMode):
                     try:
                         results = embeddingGenerator.process_local_knowledge_base()
                         st.success(results)
-                    except Exception as e:
+                    except EmbeddingGeneratorException as e:
                         st.error(f"Error processing documents: {str(e)}")
 
         with tabs[1]:
@@ -164,7 +165,7 @@ class EmbeddingsLab(AppMode):
                         results = embeddingGenerator.process_uploaded_documents(uploaded_files)
                         st.success(results)
 
-                    except Exception as e:
+                    except EmbeddingGeneratorException as e:
                         st.error(f"Error processing documents: {str(e)}")
     
     @staticmethod
@@ -196,7 +197,6 @@ class EmbeddingsLab(AppMode):
                         )
                         st.success(results)
                         
-                    except Exception as e:
+                    except EmbeddingGeneratorException as e:
                         st.error(f"Error processing web content: {str(e)}")
-
-        
+       

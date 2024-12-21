@@ -36,6 +36,8 @@ class GoogleAuthenticator(AuthenticationProvider):
         )
         
         authorization_url, state = flow.authorization_url()
+        print(f"Authorization URL: {authorization_url}")
+        print(f"State: {state}")
         
         if st.button("Login with Google"):
             st.markdown(f"[Login with Google]({authorization_url})")

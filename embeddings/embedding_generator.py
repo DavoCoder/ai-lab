@@ -120,9 +120,9 @@ class EmbeddingGenerator:
             result = self._process_local_documents()
             logger.info("Successfully processed local knowledge base")
             return result
-        except Exception as e:
+        except EmbeddingGeneratorException as e:
             logger.error("Error processing local knowledge base: %s", str(e), exc_info=True)
-            return {"status": "error", "message": str(e)}
+            raise EmbeddingGeneratorException(f"Error processing local knowledge base: {str(e)}") from e
 
     def process_uploaded_documents(self, files: List[Any]) -> Dict[str, Any]:
         """Process uploaded document files."""
@@ -155,7 +155,7 @@ class EmbeddingGenerator:
             
         except Exception as e:
             logger.error("Error processing uploaded documents: %s", str(e), exc_info=True)
-            return {"status": "error", "message": str(e)}
+            raise EmbeddingGeneratorException(f"Error processing uploaded documents: {str(e)}") from e
 
     def process_web_research(
         self,
@@ -203,7 +203,7 @@ class EmbeddingGenerator:
             
         except Exception as e:
             logger.error("Error processing web research: %s", str(e), exc_info=True)
-            return {"status": "error", "message": str(e)}
+            raise EmbeddingGeneratorException(f"Error processing web research: {str(e)}") from e
 
     def _process_local_documents(self) -> Dict[str, Any]:
         """Process documents for embedding generation and storage."""
@@ -237,13 +237,24 @@ class EmbeddingGenerator:
                 "message": f"Processed {len(valid_documents)} documents and removed {len(deleted_files)} deleted files"
             }
             
-        except Exception as e:
-            logger.error("Error processing local documents: %s", str(e), exc_info=True)
-            return {"status": "error", "message": str(e)}
+        except (IOError, OSError) as e:
+            # File system related errors
+            logger.error("File system error while processing documents: %s", str(e), exc_info=True)
+            raise EmbeddingGeneratorException(f"File system error: {str(e)}") from e
+        except ValueError as e:
+            # Data validation or format errors
+            logger.error("Invalid document data: %s", str(e), exc_info=True)
+            raise EmbeddingGeneratorException(f"Document validation error: {str(e)}") from e
+        except (ImportError, ModuleNotFoundError) as e:
+            # Module loading errors
+            logger.error("Module loading error: %s", str(e), exc_info=True)
+            raise EmbeddingGeneratorException(f"Module error: {str(e)}") from e
+        except Exception as e:  # Fallback for unexpected errors
+            logger.error("Unexpected error processing local documents: %s", str(e), exc_info=True)
+            raise EmbeddingGeneratorException(f"Unexpected error: {str(e)}") from e
 
 class EmbeddingGeneratorException(Exception):
     """Base exception for embedding generator related errors"""
     def __init__(self, message="Embedding generator error occurred"):
         self.message = message
         super().__init__(self.message)
-

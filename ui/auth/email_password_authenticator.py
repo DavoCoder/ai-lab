@@ -25,6 +25,7 @@ from ui.auth.auth_provider_interface import AuthenticationProvider
 from ui.auth.user_session import UserSession
 from ui.auth.session_manager import SessionManager
 from config import Config
+
 class EmailPasswordAuthenticator(AuthenticationProvider):
     """Email/Password authentication implementation"""
     
@@ -44,7 +45,7 @@ class EmailPasswordAuthenticator(AuthenticationProvider):
         """Initialize database with schema if tables don't exist"""
         try:
             with self._get_db_connection() as conn:
-                with open(Config.AUTH_DB_SCHEMA_PATH, 'r') as schema_file:
+                with open(Config.AUTH_DB_SCHEMA_PATH, 'r', encoding='utf-8') as schema_file:
                     conn.executescript(schema_file.read())
                 conn.commit()
         except Exception as e:
@@ -72,6 +73,7 @@ class EmailPasswordAuthenticator(AuthenticationProvider):
     
     def _show_login_form(self) -> Optional[UserSession]:
         """Show login form"""
+        session = None
         with st.form("email_password_login"):
             username = st.text_input("Username")
             password = st.text_input("Password", type="password")
@@ -88,12 +90,13 @@ class EmailPasswordAuthenticator(AuthenticationProvider):
                     )
                     self.session_manager.set_session(session)
                     st.rerun()
-                    #return session
+                    
                 st.error("Invalid credentials")
-        return None
+        return session
     
     def _show_signup_form(self) -> Optional[UserSession]:
         """Show signup form"""
+        session = None
         with st.form("email_password_signup"):
             username = st.text_input("Username")
             email = st.text_input("Email")
@@ -105,52 +108,47 @@ class EmailPasswordAuthenticator(AuthenticationProvider):
             
             if submitted:
                 # Validate inputs
-                if not all([username, email, password, confirm_password, first_name, last_name]):
-                    st.error("All fields are required")
-                    return None
-                
-                if password != confirm_password:
-                    st.error("Passwords do not match")
-                    return None
-                
-                if not self._is_valid_email(email):
-                    st.error("Invalid email address")
-                    return None
-                
-                # Check if username or email already exists
-                if self._user_exists(username, email):
-                    st.error("Username or email already exists")
-                    return None
-                
-                # Validate password strength
-                is_valid, message = self._validate_password_strength(password)
-                if not is_valid:
-                    st.error(message)
-                    return None
-                
-                # Create new user
-                if self.create_user(
-                    username=username,
-                    password=password,
-                    email=email,
-                    first_name=first_name,
-                    last_name=last_name
-                ):
-                    st.success("Account created successfully! Please log in.")
-                    # Optionally, automatically log in the user
-                    session = UserSession(
-                        username=username,
-                        authenticated=True,
-                        auth_provider="email",
-                        auth_time=datetime.now(),
-                        user_data=self._get_user_data(username)
-                    )
-                    self.session_manager.set_session(session)
-                    return session
+                if all([username, email, password, confirm_password, first_name, last_name]) \
+                    and password == confirm_password \
+                    and self._is_valid_email(email) \
+                    and not self._user_exists(username, email):
+                    
+                    # Validate password strength
+                    is_valid, message = self._validate_password_strength(password)
+                    if is_valid:
+                        # Create new user
+                        if self.create_user(
+                            username=username,
+                            password=password,
+                            email=email,
+                            first_name=first_name,
+                            last_name=last_name
+                        ):
+                            st.success("Account created successfully! Please log in.")
+                            # Optionally, automatically log in the user
+                            session = UserSession(
+                                username=username,
+                                authenticated=True,
+                                auth_provider="email",
+                                auth_time=datetime.now(),
+                                user_data=self._get_user_data(username)
+                            )
+                            self.session_manager.set_session(session)
+                        else:
+                            st.error("Error creating account. Please try again.")
+                    else:
+                        st.error(message)
                 else:
-                    st.error("Error creating account. Please try again.")
-        
-        return None
+                    if not all([username, email, password, confirm_password, first_name, last_name]):
+                        st.error("All fields are required")
+                    elif password != confirm_password:
+                        st.error("Passwords do not match")
+                    elif not self._is_valid_email(email):
+                        st.error("Invalid email address") 
+                    elif self._user_exists(username, email):
+                        st.error("Username or email already exists")
+
+        return session
     
     def _is_valid_email(self, email: str) -> bool:
         """Validate email format"""

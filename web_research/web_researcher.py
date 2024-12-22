@@ -150,7 +150,7 @@ class WebResearcher:
                 else:
                     logger.warning("No title found in content, using default")
                     
-            except (ValueError, AttributeError, Exception) as e:
+            except (ValueError, AttributeError) as e:
                 logger.error("Error extracting title: %s", str(e), exc_info=True)
         
         return title
@@ -167,7 +167,7 @@ class WebResearcher:
             # Get LLM client and completion
             client = LLMClientFactory.create_client(model_provider, api_key, model_id)
             #TODO Evaluate if adding temperature and max tokens makes sense
-            result = client.get_completion(prompt)
+            result = client.get_completion(user_prompt=prompt, system_prompt=None)
             
             # Parse response
             try:
@@ -212,7 +212,7 @@ class WebResearcher:
             # Get LLM client and completion
             client = LLMClientFactory.create_client(model_provider, api_key, model_id)
             #TODO Evaluate if adding temperature and max tokens makes sense
-            synthesis = client.get_completion(prompt)
+            synthesis = client.get_completion(user_prompt=prompt, system_prompt=None)
             
             logger.info("Successfully synthesized research findings")
             return synthesis

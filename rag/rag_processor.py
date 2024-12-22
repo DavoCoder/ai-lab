@@ -17,8 +17,6 @@ import logging
 from typing import Dict, Any
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
-from langchain_openai import ChatOpenAI
-from langchain_anthropic import ChatAnthropic
 from embeddings.openai_embedding_model import OpenAIEmbeddingModel
 from embeddings.huggingface_embedding_model import HuggingFaceEmbeddingModel
 from vector_databases.chroma_vector_database import ChromaVectorDatabase
@@ -29,7 +27,7 @@ from query_pre_processing.spellcheck_query_processor import SpellCheckQueryProce
 from query_pre_processing.query_rewriter_processor import QueryRewriterProcessor
 from response_post_processing.hallucination_filter import HallucinationFilter
 from response_post_processing.summarization_post_processor import SummarizationPostProcessor
-from llm.llm_client_factory import PromptBuilder
+from llm.llm_client_factory import LLMClientFactory, PromptBuilder
 from config import Config
 
 
@@ -41,7 +39,8 @@ class RAGProcessor:
 
     def __init__(
         self,
-        llm_option: str,
+        llm_provider: str,
+        llm_model: str,
         llm_api_key: str,
         llm_settings: Dict[str, Any],
         embedding_option: str,
@@ -54,7 +53,8 @@ class RAGProcessor:
         pre_process_options: list,
         post_process_options: list,
     ):
-        self.llm_option = llm_option
+        self.llm_provider = llm_provider
+        self.llm_model = llm_model
         self.llm_api_key = llm_api_key
         self.llm_settings = llm_settings
         self.embedding_option = embedding_option
@@ -75,7 +75,7 @@ class RAGProcessor:
         self.retriever = None
 
         logging.info("Initializing RAGProcessor with LLM: %s, Embedding: %s, Vector DB: %s", 
-                     llm_option, embedding_option, vector_db_option)
+                     self.llm_provider, self.embedding_option, self.vector_db_option)
 
     def initialize_and_execute_all(self, user_query: str) -> str:
         logging.info("Processing query: %s", user_query)
@@ -97,24 +97,6 @@ class RAGProcessor:
         logging.info("Final processed response: %s", response)
 
         return response
-    
-    def _get_llm(self):
-        if "Anthropic Claude" in self.llm_option:
-            return ChatAnthropic(
-                model="claude-3-opus-20240229" if "Opus" in self.llm_option else "claude-3-sonnet-20240229",
-                anthropic_api_key=self.llm_api_key,
-                temperature=self.llm_settings.get("temperature", 0.7),
-                max_tokens=self.llm_settings.get("max_tokens", 500)
-            )
-        if "OpenAI GPT" in self.llm_option:
-            return ChatOpenAI(
-                api_key=self.llm_api_key,
-                model="gpt-4" if "GPT-4" in self.llm_option else "gpt-3.5-turbo",
-                temperature=self.llm_settings.get("temperature", 0.7),
-                max_tokens=self.llm_settings.get("max_tokens", 500)
-            )
-       
-        raise RAGProcessorException(f"Unsupported model: {self.llm_option}")
 
     def initialize_embeddings(self) -> None:
         """Initialize the embedding model."""
@@ -171,15 +153,24 @@ class RAGProcessor:
         logging.info("Executing QA chain")
         self.vector_db.load_or_initialize(documents=[])
         self.retriever = self.vector_db.get_retriever(k=3)
-        self.llm = self._get_llm()
+
+        logging.info("Creating LLM client with provider: %s, model: %s", 
+                        self.llm_provider, self.llm_model)
+        
+        self.llm = LLMClientFactory.create_llm(provider=self.llm_provider, 
+                                                model=self.llm_model, 
+                                                api_key=self.llm_api_key)
 
          # Create the document chain
+        logging.info("Creating document chain with custom prompt")
         document_chain = create_stuff_documents_chain(self.llm, prompt=PromptBuilder.build_qa_chain_prompt())
         
         # Create the retrieval chain
+        logging.info("Creating retrieval chain")
         retrieval_chain = create_retrieval_chain(self.retriever, document_chain)
         
         # Execute the chain
+        logging.info("Executing retrieval chain")
         response = retrieval_chain.invoke({"input": user_query})
         return response["answer"]
 

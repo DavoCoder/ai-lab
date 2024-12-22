@@ -88,7 +88,8 @@ class QueryResponse(BaseModel):
 
 def get_rag_processor(config: RAGConfig) -> RAGProcessor:
     return RAGProcessor(
-        llm_option=config.llm_option,
+        llm_provider=config.llm_provider,
+        llm_model=config.llm_model,
         llm_api_key=config.llm_api_key,
         llm_settings=config.llm_settings,
         embedding_option=config.embedding_option,

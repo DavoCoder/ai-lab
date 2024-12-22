@@ -15,8 +15,7 @@
 # nlp_processor.py
 import json
 from typing import Dict, Any
-from openai import OpenAI
-from anthropic import Anthropic
+from llm.llm_client_factory import LLMClientFactory, LLMClientFactoryException
 from config import Config, ConfigException
 
 class NLPProcessor:
@@ -39,13 +38,22 @@ class NLPProcessor:
                         input_text: str, settings: Dict[str, Any], api_key: str = None):
         if not input_text:
             raise NLPProcessorException("Please provide input text")
-
-        if model_provider == "OpenAI":
-            return NLPProcessor._process_openai(task_type, model, input_text, settings, api_key)
-        if model_provider == "Anthropic":
-            return NLPProcessor._process_anthropic(task_type, model, input_text, settings, api_key)
         
-        raise NLPProcessorException(f"Provider {model_provider} not implemented yet")
+        try:
+            client = LLMClientFactory.create_client(provider=model_provider, api_key=api_key, model_id=model)
+
+            system_prompt = NLPProcessor._get_formatted_system_prompt(task_type, settings)
+
+            result = client.get_completion(user_prompt=input_text, system_prompt=system_prompt, 
+                                           temperature=settings.get("temperature", 0.7),
+                                           max_tokens=settings.get("max_tokens", 500),
+                                           top_p=settings.get("top_p", 1.0),
+                                           frequency_penalty=settings.get("frequency_penalty", 0.0),
+                                           presence_penalty=settings.get("presence_penalty", 0.0))
+            
+            return NLPProcessor._parse_model_response(task_type, result)
+        except LLMClientFactoryException as e:
+            raise NLPProcessorException(f"Error creating LLM client: {str(e)}") from e
 
     @staticmethod
     def _parse_model_response(task_type: str, result: str) -> Any:
@@ -102,54 +110,6 @@ class NLPProcessor:
             )
             
         return system_prompt
-
-    @staticmethod
-    def _process_openai(task_type: str, model: str, input_text: str, 
-                        settings: Dict[str, Any], api_key: str) -> Any:
-        client = OpenAI(api_key=api_key)
-        
-        try:
-            response = client.chat.completions.create(
-                model=model,
-                messages=[
-                    {"role": "system", "content": NLPProcessor._get_formatted_system_prompt(task_type, settings)},
-                    {"role": "user", "content": input_text}
-                ],
-                temperature=settings.get("temperature", 0.7),
-                max_tokens=settings.get("max_tokens", 500),
-                top_p=settings.get("top_p", 1.0),
-                frequency_penalty=settings.get("frequency_penalty", 0.0),
-                presence_penalty=settings.get("presence_penalty", 0.0)
-            )
-            
-            result = response.choices[0].message.content
-            return NLPProcessor._parse_model_response(task_type, result)
-
-        except Exception as e:
-            raise NLPProcessorException(f"OpenAI API error: {str(e)}") from e
-
-    @staticmethod
-    def _process_anthropic(task_type: str, model: str, input_text: str, 
-                            settings: Dict[str, Any], api_key: str) -> Any:
-        client = Anthropic(api_key=api_key)
-        
-        try:
-            response = client.messages.create(
-                model=model,
-                max_tokens=settings.get("max_tokens", 500),
-                temperature=settings.get("temperature", 0.7),
-                top_p=settings.get("top_p", 1.0),
-                messages=[{
-                    "role": "user",
-                    "content": f"{NLPProcessor._get_formatted_system_prompt(task_type, settings)}\n\n{input_text}"
-                }]
-            )
-            
-            result = response.content[0].text
-            return NLPProcessor._parse_model_response(task_type, result)
-
-        except Exception as e:
-            raise NLPProcessorException(f"Anthropic API error: {str(e)}") from e
 
 class NLPProcessorException(Exception):
     """Base exception for NLP processor related errors"""

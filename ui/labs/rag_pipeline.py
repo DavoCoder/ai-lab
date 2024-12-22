@@ -23,7 +23,8 @@ class RAGPipeline(AppMode):
     """
     RAG Pipeline
     """
-    llm_option: str = None
+    llm_provider: str = None
+    llm_model: str = None
     llm_api_key: str = None
     embedding_option: str = None
     embedding_api_key: str = None
@@ -49,12 +50,19 @@ class RAGPipeline(AppMode):
         st.sidebar.header("Configuration Options")
 
         # Select LLM and get appropriate API key
-        RAGPipeline.llm_option = st.sidebar.selectbox(
-            "Select LLM", ["OpenAI GPT-4", "OpenAI GPT-3.5", 
-            "Anthropic Claude-3 Opus", "Anthropic Claude-3 Sonnet"])
+        RAGPipeline.llm_provider = st.sidebar.selectbox(
+            "Select LLM Provider", ["OpenAI", "Anthropic"])
+        
+        # Conditional model selection based on provider
+        if RAGPipeline.llm_provider == "OpenAI":
+            RAGPipeline.llm_model = st.sidebar.selectbox(
+                "Select LLM Model", ["gpt-4", "gpt-3.5-turbo"])
+        else:  # Anthropic
+            RAGPipeline.llm_model = st.sidebar.selectbox(
+                "Select LLM Model", ["claude-3-opus-20240229", "claude-3-sonnet-20240229"])
  
-        if RAGPipeline.llm_option.startswith("OpenAI") or RAGPipeline.llm_option.startswith("Anthropic"):
-            RAGPipeline.llm_api_key = st.sidebar.text_input(f"{RAGPipeline.llm_option} API Key", type="password")
+        if RAGPipeline.llm_provider.startswith("OpenAI") or RAGPipeline.llm_provider.startswith("Anthropic"):
+            RAGPipeline.llm_api_key = st.sidebar.text_input(f"{RAGPipeline.llm_provider} API Key", type="password")
 
         # Select Embedding Model
         RAGPipeline.embedding_option = st.sidebar.selectbox("Select Embedding Model", ["OpenAI", "HuggingFace"])
@@ -96,14 +104,15 @@ class RAGPipeline(AppMode):
         if st.button("Submit Query"):
 
             ragProcessor = RAGProcessor(   
-                RAGPipeline.llm_option, RAGPipeline.llm_api_key, RAGPipeline.settings,
+                RAGPipeline.llm_provider, RAGPipeline.llm_model, 
+                RAGPipeline.llm_api_key, RAGPipeline.settings,
                 RAGPipeline.embedding_option, RAGPipeline.embedding_api_key,
                 RAGPipeline.vector_db_option, RAGPipeline.vector_db_api_key, RAGPipeline.vector_db_index,
                 RAGPipeline.toxicity_option, RAGPipeline.toxicity_api_key,
                 RAGPipeline.preprocess_options, RAGPipeline.postprocess_options
             )
 
-            st.success(f"Using LLM: {RAGPipeline.llm_option}")
+            st.success(f"Using LLM: {RAGPipeline.llm_provider} {RAGPipeline.llm_model}")
 
              # Step 1: Initialize Embeddings        
             ragProcessor.initialize_embeddings()

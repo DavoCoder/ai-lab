@@ -23,8 +23,12 @@ disable=C0111,  # missing-docstring
         C0103,  # invalid-name
         C0303,  # trailing-whitespace
         W0511,  # fixme
+        R0902,  # too-many-instance-attributes
         R0903,  # too-few-public-methods
-        R0913   # too-many-arguments
+        R0913,   # too-many-arguments
+        R0914,   # too-many-locals
+        R0917   # too-many-positional-arguments
+       
 
 [FORMAT]
 # Maximum number of characters on a single line

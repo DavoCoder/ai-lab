@@ -157,7 +157,7 @@ class RAGProcessor:
         logging.info("Creating LLM client with provider: %s, model: %s", 
                         self.llm_provider, self.llm_model)
         
-        self.llm = LLMClientFactory.create_llm(provider=self.llm_provider, 
+        self.llm = LLMClientFactory.create_chat_client(provider=self.llm_provider, 
                                                 model=self.llm_model, 
                                                 api_key=self.llm_api_key)
 

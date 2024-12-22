@@ -89,21 +89,35 @@ class LLMClientFactory:
         raise TypeError("LLMClientFactory cannot be instantiated")
     
     @staticmethod
-    def create_llm(provider: str, model: str, api_key: str):
+    def create_client(provider: str, api_key: str, model_id: str) -> LLMClient:
         if provider == "OpenAI":
-            return ChatOpenAI(
+            client = OpenAIClient(api_key)
+        elif provider == "Anthropic":
+            client = AnthropicClient(api_key)
+        else:
+            raise LLMClientFactoryException(f"Unsupported model provider: {provider}")
+        
+        client.model_id = model_id
+        return client
+
+    @staticmethod
+    def create_chat_client(provider: str, model: str, api_key: str):
+        if provider == "OpenAI":
+            client = ChatOpenAI(
                 model_name=model,
                 openai_api_key=api_key,
                 temperature=0
             )
         elif provider == "Anthropic":
-            return ChatAnthropic(
+            client = ChatAnthropic(
                 model=model,
                 anthropic_api_key=api_key,
                 temperature=0
             )
         else:
-            raise ValueError(f"Unsupported LLM provider: {provider}")
+            raise LLMClientFactoryException(f"Unsupported model provider: {provider}")
+        
+        return client
     
 class LLMClientFactoryException(Exception):
     """Base exception for LLM client factory related errors"""

@@ -48,8 +48,14 @@ class EmailPasswordAuthenticator(AuthenticationProvider):
                 with open(Config.AUTH_DB_SCHEMA_PATH, 'r', encoding='utf-8') as schema_file:
                     conn.executescript(schema_file.read())
                 conn.commit()
-        except Exception as e:
-            print(f"Error initializing database: {e}")
+        except sqlite3.Error as e:
+            print(f"Database error while initializing schema: {e}")
+            raise
+        except FileNotFoundError as e:
+            print(f"Schema file not found at {Config.AUTH_DB_SCHEMA_PATH}: {e}")
+            raise
+        except IOError as e:
+            print(f"IO error while reading schema file: {e}")
             raise
     
     def _get_db_connection(self):
@@ -167,8 +173,8 @@ class EmailPasswordAuthenticator(AuthenticationProvider):
                 ''', (username, email))
                 count = cursor.fetchone()[0]
                 return count > 0
-        except Exception as e:
-            print(f"Error checking user existence: {e}")
+        except sqlite3.Error as e:
+            print(f"Database error while checking user existence: {e}")
             return True  # Err on the side of caution
     
     def logout(self) -> None:
@@ -215,8 +221,11 @@ class EmailPasswordAuthenticator(AuthenticationProvider):
                 # Compare hashes using constant-time comparison
                 return hmac.compare_digest(password_hash, stored_hash)
                 
-        except Exception as e:
-            print(f"Error verifying credentials: {e}")
+        except sqlite3.Error as e:
+            print(f"Database error while verifying credentials: {e}")
+            return False
+        except (TypeError, ValueError) as e:
+            print(f"Data conversion error while verifying credentials: {e}")
             return False
     
     def _get_user_data(self, username: str) -> Dict[str, Any]:
@@ -272,8 +281,11 @@ class EmailPasswordAuthenticator(AuthenticationProvider):
                     'username': username
                 }
                 
-        except Exception as e:
-            print(f"Error retrieving user data: {e}")
+        except sqlite3.Error as e:
+            print(f"Database error while retrieving user data: {e}")
+            return {}
+        except (TypeError, ValueError) as e:
+            print(f"Data conversion error while retrieving user data: {e}")
             return {}
     
     # Helper method for creating new users
@@ -328,8 +340,14 @@ class EmailPasswordAuthenticator(AuthenticationProvider):
                 conn.commit()
                 return True
                 
-        except Exception as e:
-            print(f"Error creating user: {e}")
+        except sqlite3.IntegrityError as e:
+            print(f"Database integrity error while creating user (possible duplicate): {e}")
+            return False
+        except sqlite3.Error as e:
+            print(f"Database error while creating user: {e}")
+            return False
+        except (TypeError, ValueError) as e:
+            print(f"Data conversion error while creating user: {e}")
             return False
     
     def _validate_password_strength(self, password: str) -> tuple[bool, str]:

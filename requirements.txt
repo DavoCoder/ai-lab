@@ -5,14 +5,14 @@ chromadb==0.5.20
 google-auth==2.36.0
 google-auth-httplib2==0.2.0
 google-auth-oauthlib==1.2.1
-langchain==0.3.11
+langchain==0.3.13
 langchain-anthropic==0.3.0
 langchain-chroma==0.1.4
 langchain-community==0.3.11
-langchain-core==0.3.24
+langchain-core==0.3.28
 langchain-huggingface==0.1.2
 langchain-openai==0.2.12
-langchain-text-splitters==0.3.2
+langchain-text-splitters==0.3.4
 langchain_pinecone==0.2.0
 openai==1.57.2
 pinecone-client>=2.2.4

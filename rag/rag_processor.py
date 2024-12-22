@@ -15,7 +15,8 @@
 # rag_processor.py
 import logging
 from typing import Dict, Any
-from langchain.chains import RetrievalQA
+from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain.chains.retrieval import create_retrieval_chain
 from langchain_openai import ChatOpenAI
 from langchain_anthropic import ChatAnthropic
 from embeddings.openai_embedding_model import OpenAIEmbeddingModel
@@ -28,6 +29,7 @@ from query_pre_processing.spellcheck_query_processor import SpellCheckQueryProce
 from query_pre_processing.query_rewriter_processor import QueryRewriterProcessor
 from response_post_processing.hallucination_filter import HallucinationFilter
 from response_post_processing.summarization_post_processor import SummarizationPostProcessor
+from llm.llm_client_factory import PromptBuilder
 from config import Config
 
 
@@ -71,7 +73,6 @@ class RAGProcessor:
         self.toxicity_detector = None
         self.llm = None
         self.retriever = None
-        self.qa_chain = None
 
         logging.info("Initializing RAGProcessor with LLM: %s, Embedding: %s, Vector DB: %s", 
                      llm_option, embedding_option, vector_db_option)
@@ -171,9 +172,16 @@ class RAGProcessor:
         self.vector_db.load_or_initialize(documents=[])
         self.retriever = self.vector_db.get_retriever(k=3)
         self.llm = self._get_llm()
-        self.qa_chain = RetrievalQA.from_chain_type(llm=self.llm, chain_type="stuff", retriever=self.retriever)
-       
-        return self.qa_chain.invoke(user_query)["result"]
+
+         # Create the document chain
+        document_chain = create_stuff_documents_chain(self.llm, prompt=PromptBuilder.build_qa_chain_prompt())
+        
+        # Create the retrieval chain
+        retrieval_chain = create_retrieval_chain(self.retriever, document_chain)
+        
+        # Execute the chain
+        response = retrieval_chain.invoke({"input": user_query})
+        return response["answer"]
 
     def apply_post_processing(self, response: str, user_query: str) -> str:
         logging.info("Applying post-processing steps: %s", self.post_process_options)

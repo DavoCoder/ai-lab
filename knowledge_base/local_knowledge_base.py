@@ -24,12 +24,18 @@ class LocalKnowledgeBase:
         Args:
             base_path (str): The root directory for the knowledge base
         """
-        self.base_path = Path(base_path)
-        self._ensure_base_directory()
+        try:
+            self.base_path = Path(base_path)
+            self._ensure_base_directory()
+        except Exception as e:
+            raise LocalKnowledgeBaseException(f"Failed to initialize knowledge base: {str(e)}") from e
 
     def _ensure_base_directory(self) -> None:
         """Create the base directory if it doesn't exist."""
-        self.base_path.mkdir(parents=True, exist_ok=True)
+        try:
+            self.base_path.mkdir(parents=True, exist_ok=True)
+        except Exception as e:
+            raise LocalKnowledgeBaseException(f"Failed to create base directory: {str(e)}") from e
 
     def create_file(self, filename: str, content: str, subdirectory: Optional[str] = None) -> Path:
         """Create a new file in the knowledge base.
@@ -44,18 +50,24 @@ class LocalKnowledgeBase:
             
         Raises:
             FileExistsError: If the file already exists
+            LocalKnowledgeBaseException: If file creation fails
         """
-        if subdirectory:
-            file_path = self.base_path / subdirectory / filename
-            (self.base_path / subdirectory).mkdir(parents=True, exist_ok=True)
-        else:
-            file_path = self.base_path / filename
+        try:
+            if subdirectory:
+                file_path = self.base_path / subdirectory / filename
+                (self.base_path / subdirectory).mkdir(parents=True, exist_ok=True)
+            else:
+                file_path = self.base_path / filename
 
-        if file_path.exists():
-            raise FileExistsError(f"File {file_path} already exists")
+            if file_path.exists():
+                raise LocalKnowledgeBaseException(f"File {file_path} already exists")
 
-        file_path.write_text(content, encoding='utf-8')
-        return file_path
+            file_path.write_text(content, encoding='utf-8')
+            return file_path
+        except FileExistsError as e:
+            raise LocalKnowledgeBaseException(f"File {filename} already exists") from e
+        except Exception as e:
+            raise LocalKnowledgeBaseException(f"Failed to create file {filename}: {str(e)}") from e
 
     def delete_file(self, filename: str, subdirectory: Optional[str] = None) -> None:
         """Delete a file from the knowledge base.
@@ -66,19 +78,25 @@ class LocalKnowledgeBase:
             
         Raises:
             FileNotFoundError: If the file doesn't exist
+            LocalKnowledgeBaseException: If deletion fails
         """
-        if subdirectory:
-            file_path = self.base_path / subdirectory / filename
-        else:
-            file_path = self.base_path / filename
+        try:
+            if subdirectory:
+                file_path = self.base_path / subdirectory / filename
+            else:
+                file_path = self.base_path / filename
 
-        if not file_path.exists():
-            raise FileNotFoundError(f"File {file_path} does not exist")
+            if not file_path.exists():
+                raise LocalKnowledgeBaseException(f"File {file_path} does not exist")
 
-        if file_path.is_file():
-            file_path.unlink()
-        else:
-            shutil.rmtree(file_path)
+            if file_path.is_file():
+                file_path.unlink()
+            else:
+                shutil.rmtree(file_path)
+        except FileNotFoundError as e:
+            raise LocalKnowledgeBaseException(f"File {filename} does not exist") from e
+        except Exception as e:
+            raise LocalKnowledgeBaseException(f"Failed to delete file {filename}: {str(e)}") from e
 
     def delete_directory(self, directory: str) -> None:
         """Delete a directory and all its contents from the knowledge base.
@@ -88,9 +106,21 @@ class LocalKnowledgeBase:
             
         Raises:
             FileNotFoundError: If the directory doesn't exist
+            LocalKnowledgeBaseException: If deletion fails
         """
-        dir_path = self.base_path / directory
-        if not dir_path.exists():
-            raise FileNotFoundError(f"Directory {dir_path} does not exist")
+        try:
+            dir_path = self.base_path / directory
+            if not dir_path.exists():
+                raise LocalKnowledgeBaseException(f"Directory {dir_path} does not exist")
 
-        shutil.rmtree(dir_path)
+            shutil.rmtree(dir_path)
+        except FileNotFoundError as e:
+            raise LocalKnowledgeBaseException(f"Directory {directory} does not exist") from e
+        except Exception as e:
+            raise LocalKnowledgeBaseException(f"Failed to delete directory {directory}: {str(e)}") from e
+
+class LocalKnowledgeBaseException(Exception):
+    """Base exception for local knowledge base related errors"""
+    def __init__(self, message="Local knowledge base error occurred"):
+        self.message = message
+        super().__init__(self.message)

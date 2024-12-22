@@ -193,30 +193,37 @@ class WebResearch(AppMode):
         """
         # Check if providers are supported
         supported_providers = ["OpenAI", "Anthropic"]
+        error_message = ""
+        is_valid = True
+
         if research_provider not in supported_providers:
-            return False, f"Unsupported research provider: {research_provider}"
-        if synthesis_provider not in supported_providers:
-            return False, f"Unsupported synthesis provider: {synthesis_provider}"
-            
+            error_message = f"Unsupported research provider: {research_provider}"
+            is_valid = False
+        elif synthesis_provider not in supported_providers:
+            error_message = f"Unsupported synthesis provider: {synthesis_provider}"
+            is_valid = False
         # Validate research model exists for provider
-        if research_model not in NLPProcessor.PROVIDER_MODELS[research_provider]["Text Generation"]["models"]:
-            return False, f"Invalid research model {research_model} for provider {research_provider}"
-            
+        elif research_model not in NLPProcessor.PROVIDER_MODELS[research_provider]["Text Generation"]["models"]:
+            error_message = f"Invalid research model {research_model} for provider {research_provider}"
+            is_valid = False
         # Validate synthesis model exists for provider
-        if synthesis_model not in NLPProcessor.PROVIDER_MODELS[synthesis_provider]["Summarization"]["models"]:
-            return False, f"Invalid synthesis model {synthesis_model} for provider {synthesis_provider}"
-            
+        elif synthesis_model not in NLPProcessor.PROVIDER_MODELS[synthesis_provider]["Summarization"]["models"]:
+            error_message = f"Invalid synthesis model {synthesis_model} for provider {synthesis_provider}"
+            is_valid = False
         # Check API keys if needed
-        if research_provider in ["OpenAI", "Anthropic"]:
+        elif research_provider in ["OpenAI", "Anthropic"]:
             if not research_api_key:
-                return False, f"API key required for {research_provider} research model"
-            if len(research_api_key.strip()) < 20:  # Basic key length validation
-                return False, f"Invalid {research_provider} research API key"
-                
-        if synthesis_provider in ["OpenAI", "Anthropic"]:
+                error_message = f"API key required for {research_provider} research model"
+                is_valid = False
+            elif len(research_api_key.strip()) < 20:  # Basic key length validation
+                error_message = f"Invalid {research_provider} research API key"
+                is_valid = False
+        elif synthesis_provider in ["OpenAI", "Anthropic"]:
             if not synthesis_api_key:
-                return False, f"API key required for {synthesis_provider} synthesis model"
-            if len(synthesis_api_key.strip()) < 20:  # Basic key length validation
-                return False, f"Invalid {synthesis_provider} synthesis API key"
-                
-        return True, ""
+                error_message = f"API key required for {synthesis_provider} synthesis model"
+                is_valid = False
+            elif len(synthesis_api_key.strip()) < 20:  # Basic key length validation
+                error_message = f"Invalid {synthesis_provider} synthesis API key"
+                is_valid = False
+
+        return is_valid, error_message

@@ -17,8 +17,7 @@ import logging
 from typing import List, Tuple
 import requests
 from bs4 import BeautifulSoup
-from openai import OpenAI
-from anthropic import Anthropic
+from llm.llm_client_factory import PromptBuilder, LLMClientFactory, LLMClientFactoryException
 
 # Set up logger
 logger = logging.getLogger(__name__)
@@ -151,12 +150,8 @@ class WebResearcher:
                 else:
                     logger.warning("No title found in content, using default")
                     
-            except ValueError as e:
-                logger.error("Invalid content format: %s", str(e), exc_info=True)
-            except AttributeError as e:
-                logger.error("Error accessing HTML elements: %s", str(e), exc_info=True)
-            except Exception as e:
-                logger.error("Unexpected error extracting title: %s", str(e), exc_info=True)
+            except (ValueError, AttributeError, Exception) as e:
+                logger.error("Error extracting title: %s", str(e), exc_info=True)
         
         return title
 
@@ -167,32 +162,13 @@ class WebResearcher:
         logger.debug("Evaluating content relevance using %s model: %s", model_provider, model_id)
         try:
             # Prepare prompt for content evaluation
-            prompt = WebResearcher._build_content_evaluation_prompt(content, query)
+            prompt = PromptBuilder.build_content_evaluation_prompt(content, query)
             
-            # Initialize appropriate client based on provider
-            if model_provider == "OpenAI":
-                client = OpenAI(api_key=api_key)
-                response = client.chat.completions.create(
-                    model=model_id,
-                    messages=[{"role": "user", "content": prompt}],
-                    temperature=0.3
-                )
-                result = response.choices[0].message.content
-                
-            elif model_provider == "Anthropic":
-                client = Anthropic(api_key=api_key)
-                response = client.messages.create(
-                    model=model_id,
-                    messages=[{"role": "user", "content": prompt}],
-                    temperature=0.3, #TODO: Make this a parameter
-                    max_tokens=500 #TODO: Make this a parameter
-                )
-                result = response.content[0].text
-                
-            else:
-                logger.error("Unsupported model provider: %s", model_provider)
-                raise WebResearcherException(f"Unsupported model provider: {model_provider}")
-                
+            # Get LLM client and completion
+            client = LLMClientFactory.create_client(model_provider, api_key, model_id)
+            #TODO Evaluate if adding temperature and max tokens makes sense
+            result = client.get_completion(prompt)
+            
             # Parse response
             try:
                 score_line = [line for line in result.split('\n') if line.startswith('RELEVANCE_SCORE:')][0]
@@ -204,6 +180,9 @@ class WebResearcher:
                 logger.debug("Content evaluation complete. Relevance score: %.2f", relevance_score)
                 return relevance_score, filtered_content
                 
+            except LLMClientFactoryException as e:
+                logger.error("Error creating LLM client: %s", str(e), exc_info=True)
+                raise WebResearcherException(f"Error creating LLM client: {str(e)}") from e
             except Exception as e:
                 logger.error("Error parsing LLM response: %s", str(e), exc_info=True)
                 raise WebResearcherException(f"Error parsing LLM response: {str(e)}") from e
@@ -223,76 +202,27 @@ class WebResearcher:
                 return "No relevant sources found."
                 
             # Prepare content for synthesis
-            source_texts = []
-            for idx, source in enumerate(sources, 1):
-                source_text = f"Source {idx}: {source['content']}"
-                source_texts.append(source_text)
-                
+            source_texts = [f"Source {idx}: {source['content']}" 
+                          for idx, source in enumerate(sources, 1)]
             combined_sources = "\n\n".join(source_texts)
             
             # Prepare synthesis prompt
-            prompt = WebResearcher._build_synthesis_prompt(query, combined_sources, include_citations)
+            prompt = PromptBuilder.build_synthesis_prompt(query, combined_sources, include_citations)
             
-            # Get synthesis from LLM
-            if model_provider == "OpenAI":
-                client = OpenAI(api_key=api_key)
-                response = client.chat.completions.create(
-                    model=model_id,
-                    messages=[{"role": "user", "content": prompt}],
-                    temperature=0.3
-                )
-                synthesis = response.choices[0].message.content
-                
-            elif model_provider == "Anthropic":
-                client = Anthropic(api_key=api_key)
-                response = client.messages.create(
-                    model=model_id,
-                    messages=[{"role": "user", "content": prompt}],
-                    temperature=0.3, #TODO: Make this a parameter
-                    max_tokens=500 #TODO: Make this a parameter
-                )
-                synthesis = response.content[0].text
-                
-            else:
-                logger.error("Unsupported model provider: %s", model_provider)
-                raise WebResearcherException(f"Unsupported model provider: {model_provider}")
-                
+            # Get LLM client and completion
+            client = LLMClientFactory.create_client(model_provider, api_key, model_id)
+            #TODO Evaluate if adding temperature and max tokens makes sense
+            synthesis = client.get_completion(prompt)
+            
             logger.info("Successfully synthesized research findings")
             return synthesis
-            
+        
+        except LLMClientFactoryException as e:
+            logger.error("Error creating LLM client: %s", str(e), exc_info=True)
+            raise WebResearcherException(f"Error creating LLM client: {str(e)}") from e
         except Exception as e:
             logger.error("Error synthesizing research: %s", str(e), exc_info=True)
             raise WebResearcherException(f"Error synthesizing research: {str(e)}") from e
-
-    @staticmethod
-    def _build_synthesis_prompt(query, combined_sources, include_citations):
-        return f"""
-            Research Query: {query}
-            
-            Sources:
-            {combined_sources}
-            
-            Please synthesize these sources into a comprehensive research summary.
-            {"Include source citations [1], [2], etc. where appropriate." if include_citations else ""}
-            Focus on key findings and insights relevant to the research query.
-            """
-    
-    @staticmethod
-    def _build_content_evaluation_prompt(content, query):
-        return f"""
-            Research Query: {query}
-            
-            Content to evaluate:
-            {content[:2000]}  # Limit content length for API
-            
-            Please perform two tasks:
-            1. Rate the relevance of this content to the research query on a scale of 0.0 to 1.0
-            2. Extract and summarize the most relevant information from this content
-            
-            Format your response as:
-            RELEVANCE_SCORE: [score]
-            RELEVANT_CONTENT: [extracted content]
-            """
     
 class WebResearcherException(Exception):
     """Base exception for web researcher related errors"""

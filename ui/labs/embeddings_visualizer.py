@@ -59,32 +59,12 @@ class EmbeddingsVisualizer:
             df['filename'] = [m.get('source', 'unknown') if m else 'unknown' for m in metadata]
             
             # Create scatter plot based on number of components
-            if n_components == 3:
-                fig = px.scatter_3d(
-                    df,
-                    x='PC1',
-                    y='PC2',
-                    z='PC3',
-                    hover_data=['filename'],
-                    title='Document Embeddings Visualization (PCA)',
-                    labels={'PC1': 'First Component',
-                            'PC2': 'Second Component',
-                            'PC3': 'Third Component'}
-                )
-            elif n_components == 2:
-                fig = px.scatter(
-                    df,
-                    x='PC1',
-                    y='PC2',
-                    hover_data=['filename'],
-                    title='Document Embeddings Visualization (PCA)',
-                    labels={'PC1': 'First Component',
-                            'PC2': 'Second Component'}
-                )
-            else:
+            fig = EmbeddingsVisualizer._create_scatter_plot(df, n_components)
+            
+            if fig is None:
                 st.warning("Not enough data for meaningful visualization")
                 return
-            
+                
             st.plotly_chart(fig)
             
             # Show explained variance ratio
@@ -110,9 +90,44 @@ class EmbeddingsVisualizer:
                         # Optionally show number of documents found
                         st.info(f"Found {len(similar_docs)} similar documents.")
                         
-                except Exception as e:
-                    st.error(f"Error performing similarity search: {str(e)}")
+                except (ValueError, RuntimeError) as e:
+                    st.error(f"Similarity search error: {str(e)}")
+                    return
             
-        except Exception as e:
-            st.error(f"Error visualizing embeddings: {str(e)}")
-            raise
+        except (np.linalg.LinAlgError) as e:
+            # Handles PCA computation errors (singular matrix, wrong dimensions, etc.)
+            st.error(f"Error computing PCA: {str(e)}")
+            return
+        
+        except (ValueError, AttributeError) as e:
+            # Handles cases where vector_db is not properly initialized or data format is incorrect
+            st.error(f"Database initialization error: {str(e)}")
+            return
+    
+    @staticmethod
+    def _create_scatter_plot(df, n_components):
+        """Create a scatter plot based on number of components"""
+        fig = None
+        if n_components == 3:
+            fig = px.scatter_3d(
+                df,
+                x='PC1',
+                y='PC2',
+                z='PC3',
+                hover_data=['filename'],
+                title='Document Embeddings Visualization (PCA)',
+                labels={'PC1': 'First Component',
+                        'PC2': 'Second Component',
+                        'PC3': 'Third Component'}
+            )
+        if n_components == 2:
+            fig = px.scatter(
+                df,
+                x='PC1',
+                y='PC2',
+                hover_data=['filename'],
+                title='Document Embeddings Visualization (PCA)',
+                labels={'PC1': 'First Component',
+                        'PC2': 'Second Component'}
+            )
+        return fig

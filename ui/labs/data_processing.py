@@ -20,7 +20,7 @@ from pathlib import Path
 from typing import List, Any
 import streamlit as st
 from ui.labs.app_mode import AppMode
-from data_processing.document_processor import DocumentProcessor
+from data_processing.document_processor import DocumentProcessor, DocumentProcessorException
 
 class DataProcessing(AppMode):
     """Data Processing"""
@@ -92,7 +92,7 @@ class DataProcessing(AppMode):
                         file_name=f"cleaned_{Path(file.name).stem}.txt",
                         mime="text/plain"
                     )
-                except Exception as e:
+                except DocumentProcessorException as e:
                     st.error(f"Error processing {file.name}: {str(e)}")
 
     @staticmethod
@@ -135,7 +135,7 @@ class DataProcessing(AppMode):
                         mime="application/zip"
                     )
                     
-                except Exception as e:
+                except DocumentProcessorException as e:
                     st.error(f"Error splitting {file.name}: {str(e)}")
 
     @staticmethod
@@ -163,7 +163,7 @@ class DataProcessing(AppMode):
                         mime=f"text/{target_format.lower()}"
                     )
                     
-                except Exception as e:
+                except DocumentProcessorException as e:
                     st.error(f"Error converting {file.name}: {str(e)}")
 
     @staticmethod
@@ -186,7 +186,7 @@ class DataProcessing(AppMode):
                     mime="application/json"
                 )
                 
-            except Exception as e:
+            except DocumentProcessorException as e:
                 st.error(f"Error extracting metadata from {file.name}: {str(e)}")
 
     @staticmethod
@@ -215,7 +215,7 @@ class DataProcessing(AppMode):
                     progress = (idx + 1) / len(files)
                     progress_bar.progress(progress)
                     
-                except Exception as e:
+                except DocumentProcessorException as e:
                     st.error(f"Error processing {file.name}: {str(e)}")
             
             if results:

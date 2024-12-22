@@ -17,7 +17,7 @@
 from pathlib import Path
 import streamlit as st
 from config import Config
-from knowledge_base.local_knowledge_base import LocalKnowledgeBase
+from knowledge_base.local_knowledge_base import LocalKnowledgeBase, LocalKnowledgeBaseException
 
 class KnowledgeBaseLab:
     """
@@ -74,7 +74,7 @@ class KnowledgeBaseLab:
                         subdirectory=subdirectory if subdirectory else None
                     )
                     st.success(f"Successfully uploaded: {uploaded_file.name}")
-                except Exception as e:
+                except LocalKnowledgeBaseException as e:
                     st.error(f"Error uploading {uploaded_file.name}: {str(e)}")
 
     @staticmethod
@@ -130,7 +130,7 @@ class KnowledgeBaseLab:
                         # If file is in root directory
                         kb.delete_file(file_path)
                     st.success(f"Successfully deleted: {file_path}")
-                except Exception as e:
+                except LocalKnowledgeBaseException as e:
                     st.error(f"Error deleting {file_path}: {str(e)}")
             
             # Rerun the app to refresh the file list
@@ -146,7 +146,9 @@ class KnowledgeBaseLab:
                     files.append(item)
                 elif item.is_dir():
                     files.extend(KnowledgeBaseLab._list_files_recursive(item))
-        except Exception as e:
+        except PermissionError as e:
+            st.error(f"Permission denied accessing directory {directory}: {str(e)}")
+        except OSError as e:
             st.error(f"Error accessing directory {directory}: {str(e)}")
         return files
         

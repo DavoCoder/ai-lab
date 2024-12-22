@@ -43,8 +43,6 @@ class GoogleAuthenticator(AuthenticationProvider):
             st.markdown(f"[Login with Google]({authorization_url})")
             # Handle OAuth callback and create session
             # This is simplified - need proper OAuth callback handling
-            
-        return None
     
     def logout(self) -> None:
         self.session_manager.clear_session()

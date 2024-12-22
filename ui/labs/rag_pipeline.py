@@ -53,7 +53,7 @@ class RAGPipeline(AppMode):
             "Select LLM", ["OpenAI GPT-4", "OpenAI GPT-3.5", 
             "Anthropic Claude-3 Opus", "Anthropic Claude-3 Sonnet"])
  
-        if "OpenAI" in RAGPipeline.llm_option or "Anthropic" in RAGPipeline.llm_option:
+        if RAGPipeline.llm_option.startswith("OpenAI") or RAGPipeline.llm_option.startswith("Anthropic"):
             RAGPipeline.llm_api_key = st.sidebar.text_input(f"{RAGPipeline.llm_option} API Key", type="password")
 
         # Select Embedding Model

@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import List, Dict, Any, Tuple
 import pandas as pd
 import docx
-import PyPDF2
+from pypdf import PdfReader
 from bs4 import BeautifulSoup
 
 class DocumentProcessor:
@@ -109,7 +109,7 @@ class DocumentProcessor:
             }
             
             if metadata["type"] == ".pdf":
-                pdf_reader = PyPDF2.PdfReader(file)
+                pdf_reader = PdfReader(file)
                 metadata.update({
                     "pages": len(pdf_reader.pages),
                     "info": pdf_reader.metadata
@@ -134,7 +134,7 @@ class DocumentProcessor:
             if file_ext == ".txt":
                 content = file.getvalue().decode()
             elif file_ext == ".pdf":
-                pdf_reader = PyPDF2.PdfReader(file)
+                pdf_reader = PdfReader(file)
                 content = " ".join(page.extract_text() for page in pdf_reader.pages)
             elif file_ext == ".docx":
                 doc = docx.Document(file)

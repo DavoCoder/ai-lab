@@ -20,6 +20,7 @@ from ui.labs.web_research import WebResearch
 from ui.labs.model_playground import ModelPlayground
 from ui.labs.data_processing import DataProcessing
 from ui.labs.knowledge_base_lab import KnowledgeBaseLab
+from ui.labs.agent_lab import AgentLab
 # Title and description mapping
 MODE_INFO = {
     "Home": {
@@ -49,6 +50,10 @@ MODE_INFO = {
     "RAG Pipeline": {
         "title": "🔍 RAG Pipeline",
         "description": "Retrieval-Augmented Generation system for enhanced question answering using your documents."
+    },
+    "Agent Lab": {
+        "title": "🤖 Agent Lab",
+        "description": "Experiment with different AI agents for research, document analysis, and code assistance."
     }
 }
 
@@ -60,5 +65,6 @@ MODE_CLASSES = {
     "Data Processing": DataProcessing,
     "Knowledge Base": KnowledgeBaseLab,
     "Embeddings Lab": EmbeddingsLab,
-    "RAG Pipeline": RAGPipeline 
+    "RAG Pipeline": RAGPipeline,
+    "Agent Lab": AgentLab
 }

@@ -18,7 +18,8 @@ import re
 from typing import List
 import streamlit as st
 from ui.labs.app_mode import AppMode
-from llm.llm_client_factory import PromptBuilder, LLMClientFactory, LLMClientFactoryException
+from llm.llm_client_factory import LLMClientFactory, LLMClientFactoryException
+from llm.prompt_builder import PromptBuilder
 
 class AgentLab(AppMode):
     """Agent Lab for demonstrating different agentic workflows"""

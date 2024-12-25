@@ -27,7 +27,8 @@ from query_pre_processing.spellcheck_query_processor import SpellCheckQueryProce
 from query_pre_processing.query_rewriter_processor import QueryRewriterProcessor
 from response_post_processing.hallucination_filter import HallucinationFilter
 from response_post_processing.summarization_post_processor import SummarizationPostProcessor
-from llm.llm_client_factory import LLMClientFactory, PromptBuilder
+from llm.llm_client_factory import LLMClientFactory
+from llm.prompt_builder import PromptBuilder
 from config import Config
 
 

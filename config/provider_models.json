@@ -74,6 +74,39 @@
             }
         }
     },
+    "Google": {
+        "Text Generation": {
+            "models": ["gemini-pro", "gemini-pro-vision"],
+            "model_ids": {
+                "gemini-pro": "gemini-pro",
+                "gemini-pro-vision": "gemini-pro-vision"
+            }
+        },
+        "Text Classification": {
+            "models": ["gemini-pro"],
+            "model_ids": {
+                "gemini-pro": "gemini-pro"
+            }
+        },
+        "Named Entity Recognition": {
+            "models": ["gemini-pro"],
+            "model_ids": {
+                "gemini-pro": "gemini-pro"
+            }
+        },
+        "Summarization": {
+            "models": ["gemini-pro"],
+            "model_ids": {
+                "gemini-pro": "gemini-pro"
+            }
+        },
+        "Translation": {
+            "models": ["gemini-pro"],
+            "model_ids": {
+                "gemini-pro": "gemini-pro"
+            }
+        }
+    },
     "HuggingFace": {
         "Text Generation": {
             "models": ["meta-llama/Llama-2-70b", "mistralai/Mixtral-8x7B", "tiiuae/falcon-40b"],

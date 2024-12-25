@@ -48,7 +48,7 @@ class ModelPlayground(AppMode):
         
         # Provider-specific settings
         api_key = None
-        if model_provider in ["OpenAI", "Anthropic"]:
+        if model_provider in ["OpenAI", "Anthropic", "Google"]:
             api_key = st.sidebar.text_input(f"{model_provider} API Key", type="password")
         
         # Advanced Settings
@@ -63,7 +63,7 @@ class ModelPlayground(AppMode):
         
         # Process button
         if st.button("Process"):
-            if not api_key and model_provider in ["OpenAI", "Anthropic"]:
+            if not api_key and model_provider in ["OpenAI", "Anthropic", "Google"]:
                 st.error(f"Please provide {model_provider} API key")
                 return
                 

@@ -17,7 +17,8 @@ import logging
 from typing import List, Tuple
 import requests
 from bs4 import BeautifulSoup
-from llm.llm_client_factory import PromptBuilder, LLMClientFactory, LLMClientFactoryException
+from llm.llm_client_factory import LLMClientFactory, LLMClientFactoryException
+from llm.prompt_builder import PromptBuilder
 
 # Set up logger
 logger = logging.getLogger(__name__)

@@ -14,6 +14,7 @@
 
 # chroma_vector_database.py
 import os
+from typing import List, Dict, Any
 from langchain_chroma import Chroma
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from vector_databases.vector_database_interface import VectorDatabase
@@ -84,3 +85,24 @@ class ChromaVectorDatabase(VectorDatabase):
         if not self.vector_db:
             raise ValueError("VectorDB is not initialized. Call load_or_initialize() first.")
         return self.vector_db.as_retriever(search_kwargs={"k": k})
+
+    def similarity_search(self, query: str, k: int = 3) -> List[Dict[str, Any]]:
+        """Perform similarity search using ChromaDB."""
+        if not self.vector_db:
+            raise ValueError("Database not initialized. Call load_or_initialize first.")
+        
+        # Perform search
+        results = self.vector_db.similarity_search(
+            query=query,
+            n_results=k
+        )
+        
+        # Format results
+        formatted_results = []
+        for idx in range(len(results['documents'][0])):
+            formatted_results.append({
+                "text": results['documents'][0][idx],
+                "metadata": results['metadatas'][0][idx] if results['metadatas'] else {}
+            })
+            
+        return formatted_results

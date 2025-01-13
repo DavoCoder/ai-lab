@@ -29,7 +29,7 @@ class OpenAIEmbeddingModel(EmbeddingModel):
             api_key (str): OpenAI API key.
         """
         self.api_key = api_key
-
+        self.model = None
     def load_model(self):
         """
         Load the OpenAI Embeddings model.
@@ -38,4 +38,17 @@ class OpenAIEmbeddingModel(EmbeddingModel):
         """
         os.environ["OPENAI_API_KEY"] = self.api_key
         print("OpenAI Embeddings model loaded successfully.")
-        return OpenAIEmbeddings()
+        self.model = OpenAIEmbeddings()
+        return self.model
+    
+    def embed_query(self, query: str):
+        """
+        Embed a query.
+        Args:
+            query: The query to embed.
+        Returns:
+            An embedding vector.
+        """
+        if self.model is None:
+            self.load_model()
+        return self.model.embed_query(query)

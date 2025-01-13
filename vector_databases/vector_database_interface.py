@@ -14,6 +14,7 @@
 
 # vector_database_interface.py
 from abc import ABC, abstractmethod
+from typing import List, Dict, Any
 
 class VectorDatabase(ABC):
     @abstractmethod
@@ -46,4 +47,17 @@ class VectorDatabase(ABC):
         Return a retriever for similarity search.
         Args:
             k (int): Number of top results to retrieve.
+        """
+    
+    @abstractmethod
+    def similarity_search(self, query: str, k: int = 3) -> List[Dict[str, Any]]:
+        """
+        Perform similarity search in the vector database.
+        
+        Args:
+            query: The search query string
+            k: Number of results to return (default: 3)
+            
+        Returns:
+            List of dictionaries containing search results with text and metadata
         """

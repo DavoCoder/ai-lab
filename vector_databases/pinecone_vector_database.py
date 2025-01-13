@@ -13,6 +13,7 @@
 # limitations under the License.
 
 # pinecone_vector_database.py
+from typing import List, Dict, Any
 from pinecone import Pinecone, ServerlessSpec
 from langchain_pinecone import PineconeVectorStore
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -55,3 +56,27 @@ class PineconeVectorDatabase(VectorDatabase):
 
     def get_retriever(self, k=3):
         return self.vector_store.as_retriever(search_kwargs={"k": k})
+    
+    def similarity_search(self, query: str, k: int = 3) -> List[Dict[str, Any]]:
+        """Perform similarity search using Pinecone."""
+        # Get query embedding
+        query_embedding = self.embedding_model.embed_query(query)
+        
+        # Perform search
+        results = self.index.query(
+            vector=query_embedding,
+            top_k=k,
+            include_metadata=True
+        )
+        
+        # Format results
+        formatted_results = []
+        for match in results.matches:
+            formatted_results.append({
+                "text": match.metadata.get("text", ""),
+                "metadata": {
+                    k: v for k, v in match.metadata.items() if k != "text"
+                }
+            })
+            
+        return formatted_results

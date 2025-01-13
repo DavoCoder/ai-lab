@@ -24,6 +24,31 @@ from llm.prompt_builder import PromptBuilder
 class AgentLab(AppMode):
     """Agent Lab for demonstrating different agentic workflows"""
 
+    TASK_CONFIGS = {
+        "Code Analysis": {
+            "input_type": "text_input",
+            "label": "Analysis Focus",
+            "placeholder": "e.g., 'Identify potential performance issues' or 'Explain the main logic'"
+        },
+        "Code Generation": {
+            "input_type": "text_input",
+            "label": "Generation Requirements",
+            "placeholder": "Describe the code you want to generate"
+        },
+        "Code Documentation": {
+            "input_type": "select",
+            "label": "Documentation Style",
+            "options": ["Google Style", "NumPy Style", "RST Style"],
+            "instruction_template": "Generate {} documentation for this code"
+        },
+        "Code Review": {
+            "input_type": "multiselect",
+            "label": "Review Focus Areas",
+            "options": ["Best Practices", "Security", "Performance", "Readability", "Error Handling"],
+            "instruction_template": "Review code focusing on: {}"
+        }
+    }
+
     def __init__(self):
         self.llm_provider = None
         self.llm_model = None
@@ -57,7 +82,6 @@ class AgentLab(AppMode):
             "Code Assistant Agent",
             "Agent 2", 
             "Agent 3"
-            
         ])
 
         with tab1:
@@ -98,28 +122,7 @@ class AgentLab(AppMode):
         )
         
         # Task-specific inputs
-        if task_type == "Code Analysis":
-            instruction = st.text_input(
-                "Analysis Focus",
-                placeholder="e.g., 'Identify potential performance issues' or 'Explain the main logic'"
-            )
-        elif task_type == "Code Generation":
-            instruction = st.text_input(
-                "Generation Requirements",
-                placeholder="Describe the code you want to generate"
-            )
-        elif task_type == "Code Documentation":
-            doc_style = st.selectbox(
-                "Documentation Style",
-                ["Google Style", "NumPy Style", "RST Style"]
-            )
-            instruction = f"Generate {doc_style} documentation for this code"
-        else:  # Code Review
-            review_focus = st.multiselect(
-                "Review Focus Areas",
-                ["Best Practices", "Security", "Performance", "Readability", "Error Handling"]
-            )
-            instruction = f"Review code focusing on: {', '.join(review_focus)}"
+        instruction = AgentLab._get_task_instruction(task_type)
         
         if st.button("Execute Code Agent") and code_input and instruction:
             try:
@@ -189,3 +192,23 @@ class AgentLab(AppMode):
         matches = re.finditer(pattern, text, re.DOTALL)
         
         return [match.group(1).strip() for match in matches]
+
+    @staticmethod
+    def _get_task_instruction(task_type: str) -> str:
+        """Get instruction based on task type configuration."""
+        config = AgentLab.TASK_CONFIGS[task_type]
+        instruction = ""
+        
+        if config["input_type"] == "text_input":
+            instruction = st.text_input(
+                config["label"],
+                placeholder=config["placeholder"]
+            )
+        elif config["input_type"] == "select":
+            style = st.selectbox(config["label"], config["options"])
+            instruction = config["instruction_template"].format(style)
+        elif config["input_type"] == "multiselect":
+            focus = st.multiselect(config["label"], config["options"])
+            instruction = config["instruction_template"].format(", ".join(focus))
+            
+        return instruction

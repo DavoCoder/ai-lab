@@ -36,6 +36,7 @@ class HuggingFaceEmbeddingModel(EmbeddingModel):
             model_name (str): Name of the HuggingFace model to load.
         """
         self.model_name = model_name
+        self.model = None
 
     def load_model(self):
         """
@@ -44,4 +45,17 @@ class HuggingFaceEmbeddingModel(EmbeddingModel):
             HuggingFaceEmbeddings instance.
         """
         print(f"Loading HuggingFace model: {self.model_name}")
-        return HuggingFaceEmbeddings(model_name=self.model_name)
+        self.model = HuggingFaceEmbeddings(model_name=self.model_name)
+        return self.model
+    
+    def embed_query(self, query: str):
+        """
+        Embed a query.
+        Args:
+            query: The query to embed.
+        Returns:
+            An embedding vector.
+        """ 
+        if self.model is None:
+            self.load_model()
+        return self.model.embed_query(query)

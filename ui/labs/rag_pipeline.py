@@ -16,6 +16,7 @@
 from typing import Dict, Any, List
 import streamlit as st
 from ui.labs.app_mode import AppMode
+from ui.labs.lab_utils import LabUtils
 from rag.rag_processor import RAGProcessor
 from config import Config, ConfigException
 
@@ -158,11 +159,6 @@ class RAGPipeline(AppMode):
         for setting_name, setting_config in RAGPipeline.TASK_SETTINGS["default"].items():
             if setting_config["type"] in ["float", "int"]:
                 settings[setting_name] = st.slider(
-                    setting_name.replace("_", " ").title(),
-                    setting_config["min"],
-                    setting_config["max"],
-                    setting_config["default"]
-                )
-        
+                    *LabUtils.get_slider_params(setting_name, setting_config))
         
         return settings

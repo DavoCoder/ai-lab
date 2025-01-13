@@ -31,7 +31,7 @@ class EmbeddingsVisualizer:
             vector_db.load_or_initialize(documents=[])
             
             # Get all embeddings from ChromaDB
-            results = vector_db.vector_db._collection.get(include=['embeddings', 'documents', 'metadatas'])
+            results = vector_db.vector_db.get(include=['embeddings', 'documents', 'metadatas'])
             
             # Check if we have any results
             if not isinstance(results, dict) or 'embeddings' not in results or len(results['embeddings']) == 0:

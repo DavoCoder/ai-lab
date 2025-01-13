@@ -23,3 +23,13 @@ class EmbeddingModel(ABC):
         Returns:
             An initialized embedding model.
         """
+
+    @abstractmethod
+    def embed_query(self, query: str):
+        """
+        Embed a query.
+        Args:
+            query: The query to embed.
+        Returns:
+            An embedding vector.
+        """

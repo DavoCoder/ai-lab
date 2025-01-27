@@ -101,6 +101,29 @@ class GoogleClient(LLMClient):
             
         response = self.client.invoke(prompt)
         return response.content
+    
+class DeepSeekClient(LLMClient):
+    def __init__(self, api_key: str):
+        super().__init__()
+        self.client = OpenAI(base_url="https://api.deepseek.com", api_key=api_key)
+        
+    def get_completion(self, user_prompt: str, system_prompt: str, temperature: float = 0.3, 
+                       max_tokens: int = 500, top_p: float = 1.0, frequency_penalty: float = 0.0, 
+                       presence_penalty: float = 0.0) -> str:
+        messages = [{"role": "user", "content": user_prompt}]
+        if system_prompt:
+            messages.insert(0, {"role": "system", "content": system_prompt})
+            
+        response = self.client.chat.completions.create(
+            model=self.model_id,
+            messages=messages,
+            temperature=temperature,
+            max_tokens=max_tokens,
+            top_p=top_p,
+            frequency_penalty=frequency_penalty,
+            presence_penalty=presence_penalty
+        )
+        return response.choices[0].message.content
 
 class LLMClientFactory:
     def __init__(self):
@@ -114,6 +137,8 @@ class LLMClientFactory:
             client = AnthropicClient(api_key)
         elif provider == "Google":
             client = GoogleClient(api_key)
+        elif provider == "DeepSeek":
+            client = DeepSeekClient(api_key)
         else:
             raise LLMClientFactoryException(f"Unsupported model provider: {provider}")
         
@@ -138,6 +163,13 @@ class LLMClientFactory:
             client = ChatGoogleGenerativeAI(
                 model=model,
                 google_api_key=api_key,
+                temperature=0
+            )
+        elif provider == "DeepSeek":
+            client = ChatOpenAI(
+                model_name=model, 
+                openai_api_base="https://api.deepseek.com",
+                openai_api_key=api_key,
                 temperature=0
             )
         else:

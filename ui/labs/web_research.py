@@ -41,7 +41,7 @@ class WebResearch(AppMode):
         st.sidebar.subheader("Research Model")
         research_provider = st.sidebar.selectbox(
             "Research Provider",
-            ["OpenAI", "Anthropic"],
+            ["OpenAI", "Anthropic", "Google", "DeepSeek"],
             key="research_provider"
         )
         
@@ -55,7 +55,7 @@ class WebResearch(AppMode):
 
          # API Keys
         research_api_key = None
-        if research_provider in ["OpenAI", "Anthropic"]:
+        if research_provider in ["OpenAI", "Anthropic", "Google", "DeepSeek"]:
             research_api_key = st.sidebar.text_input(
                 f"{research_provider} Research API Key",
                 type="password",
@@ -66,7 +66,7 @@ class WebResearch(AppMode):
         st.sidebar.subheader("Synthesis Model")
         synthesis_provider = st.sidebar.selectbox(
             "Synthesis Provider",
-            ["OpenAI", "Anthropic"],
+            ["OpenAI", "Anthropic", "Google", "DeepSeek"],
             key="synthesis_provider"
         )
         
@@ -79,7 +79,7 @@ class WebResearch(AppMode):
         )
 
         synthesis_api_key = None
-        if synthesis_provider in ["OpenAI", "Anthropic"]:
+        if synthesis_provider in ["OpenAI", "Anthropic", "Google", "DeepSeek"]:
             synthesis_api_key = st.sidebar.text_input(
                 f"{synthesis_provider} Synthesis API Key",
                 type="password",
@@ -192,7 +192,7 @@ class WebResearch(AppMode):
             Tuple[bool, str]: (is_valid, error_message)
         """
         # Check if providers are supported
-        supported_providers = ["OpenAI", "Anthropic"]
+        supported_providers = ["OpenAI", "Anthropic", "Google", "DeepSeek"]
         error_message = ""
         is_valid = True
 
@@ -211,14 +211,14 @@ class WebResearch(AppMode):
             error_message = f"Invalid synthesis model {synthesis_model} for provider {synthesis_provider}"
             is_valid = False
         # Check API keys if needed
-        elif research_provider in ["OpenAI", "Anthropic"]:
+        elif research_provider in ["OpenAI", "Anthropic", "Google", "DeepSeek"]:
             if not research_api_key:
                 error_message = f"API key required for {research_provider} research model"
                 is_valid = False
             elif len(research_api_key.strip()) < 20:  # Basic key length validation
                 error_message = f"Invalid {research_provider} research API key"
                 is_valid = False
-        elif synthesis_provider in ["OpenAI", "Anthropic"]:
+        elif synthesis_provider in ["OpenAI", "Anthropic", "Google", "DeepSeek"]:
             if not synthesis_api_key:
                 error_message = f"API key required for {synthesis_provider} synthesis model"
                 is_valid = False

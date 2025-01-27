@@ -52,17 +52,24 @@ class RAGPipeline(AppMode):
 
         # Select LLM and get appropriate API key
         RAGPipeline.llm_provider = st.sidebar.selectbox(
-            "Select LLM Provider", ["OpenAI", "Anthropic"])
+            "Select LLM Provider", ["OpenAI", "Anthropic", "Google", "DeepSeek"])
         
         # Conditional model selection based on provider
         if RAGPipeline.llm_provider == "OpenAI":
             RAGPipeline.llm_model = st.sidebar.selectbox(
                 "Select LLM Model", ["gpt-4", "gpt-3.5-turbo"])
-        else:  # Anthropic
+        elif RAGPipeline.llm_provider == "Anthropic":  # Anthropic
             RAGPipeline.llm_model = st.sidebar.selectbox(
                 "Select LLM Model", ["claude-3-opus-20240229", "claude-3-sonnet-20240229"])
+        elif RAGPipeline.llm_provider == "Google":  # Google
+            RAGPipeline.llm_model = st.sidebar.selectbox(
+                "Select LLM Model", ["gemini-1.5-flash-002", "gemini-1.5-pro-002"])
+        elif RAGPipeline.llm_provider == "DeepSeek":  # DeepSeek
+            RAGPipeline.llm_model = st.sidebar.selectbox(
+                "Select LLM Model", ["deepseek-chat"])
  
-        if RAGPipeline.llm_provider.startswith("OpenAI") or RAGPipeline.llm_provider.startswith("Anthropic"):
+        if RAGPipeline.llm_provider.startswith("OpenAI") or RAGPipeline.llm_provider.startswith("Anthropic") or \
+            RAGPipeline.llm_provider.startswith("Google") or RAGPipeline.llm_provider.startswith("DeepSeek"):
             RAGPipeline.llm_api_key = st.sidebar.text_input(f"{RAGPipeline.llm_provider} API Key", type="password")
 
         # Select Embedding Model

@@ -107,6 +107,38 @@
             }
         }
     },
+    "DeepSeek": {
+        "Text Generation": {
+            "models": ["deepseek-chat"],
+            "model_ids": {
+                "deepseek-chat": "deepseek-chat"
+            }
+        },
+        "Text Classification": {
+            "models": ["deepseek-chat"],
+            "model_ids": {
+                "deepseek-chat": "deepseek-chat"
+            }
+        },
+        "Named Entity Recognition": {
+            "models": ["deepseek-chat"],
+            "model_ids": {
+                "deepseek-chat": "deepseek-chat"
+            }
+        },
+        "Summarization": {
+            "models": ["deepseek-chat"],
+            "model_ids": {
+                "deepseek-chat": "deepseek-chat"
+            }
+        },
+        "Translation": {
+            "models": ["deepseek-chat"],
+            "model_ids": {
+                "deepseek-chat": "deepseek-chat"
+            }
+        }
+    },
     "HuggingFace": {
         "Text Generation": {
             "models": ["meta-llama/Llama-2-70b", "mistralai/Mixtral-8x7B", "tiiuae/falcon-40b"],
